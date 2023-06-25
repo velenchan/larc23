@@ -1,0 +1,30 @@
+This directory contains the data for challenge period of iDASH23's HE Track (Tentatively Track 1).
+
+We are challenging the participants to build a secure method using a HE-based scheme that queries the existence of the genome of a query individual's relatives (Query site) within a database (Database site).  
+
+Both sites would like to keep data confidential. The output of the submission should include a score of participation for each subject in the query site's genomes. 
+
+The output file should be a 2-column file that contains the query subject identifier and a score for existence of a relative of the corresponding individual in the database. 
+
+This directory contains following files:
+
+1. DATABASE_samples.list : 2,000 subject identifiers for the individuals in the database site.
+2. DATABASE_SITE_genotypes.txt : The genotypes of 16,514 variants for the individuals in the database site.
+3. QUERY_samples.list : 200 subject identifiers for the individuals in the query site.
+4. QUERY_SITE_genotypes.txt : Genotypes for query site individuals.
+5. PAIRWISE_RELATED_SUBJECTS.list : 2-column file that contains the 200 pairs of related individuals in the query site and the database site. First column is the identifier in query site subjects, Second column is the identifier in the database site subjects. 
+
+
+File Formats:
+=============
+Genotypes: (QUERY_SITE_genotypes.txt, DATABASE_SITE_genotypes.txt):
+Tab-delimited text files with first 4 columns indicating the position of the variants. Remaining columns store the variant genotypes (0,1,2) for the subjects. The ordering of the columns correspond to the subject identifier in QUERY_samples.list and DATABASE_samples.list. 
+
+Sample identifiers are single column file with subject identifiers.
+
+PAIRWISE_RELATED_SUBJECTS.list: Tab-delimited 2 column file that 
+
+FAQ:
+====
+Please feel free to ask any questions at the FAQ: https://docs.google.com/document/d/1K9or7E-ICvsYKRU_9zBdx3BoWll8wvjL1xzWWGnicQg/edit?usp=share_link
+
