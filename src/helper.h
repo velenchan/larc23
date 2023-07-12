@@ -19,6 +19,11 @@
 #include <vector>
 
 
+using namespace std;
+
+
+
+
 
 /*
 Helper function: Prints the parameters in a SEALContext.
@@ -64,8 +69,36 @@ inline void print_parameters(const seal::SEALContext &context)
     std::cout << coeff_modulus.back().bit_count();
     std::cout << ") bits" << std::endl;
 
+     /*
+    Print the true (product) coefficient modulus.
+    */
+    std::cout << "|   coeff_modulus: ";
+    // std::cout << context_data.total_coeff_modulus_bit_count() << " (";
+    // auto coeff_modulus = context_data.parms().coeff_modulus();
+
+     
+
+    for (std::size_t i = 0; i < coeff_modulus_size - 1; i++)
+    {
+        if (context_data.total_coeff_modulus()[i] != 0){
+            std::cout << context_data.total_coeff_modulus()[i] << " * ";
+        }
+        else{
+            std::cout <<  "1 * ";
+        }
+    }
+    if (context_data.total_coeff_modulus()[coeff_modulus_size - 1] != 0){
+        std::cout << context_data.total_coeff_modulus()[coeff_modulus_size - 1];
+    }
+    else{
+        std::cout <<  "1 ";
+    }
+    std::cout << std::endl;
+
+
     /*
     For the BFV scheme print the plain_modulus parameter.
+
     */
     if (context_data.parms().scheme() == seal::scheme_type::bfv)
     {
@@ -197,3 +230,4 @@ inline std::string uint64_to_hex_string(std::uint64_t value)
 {
     return seal::util::uint_to_hex_string(&value, std::size_t(1));
 }
+

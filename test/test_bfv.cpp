@@ -8,7 +8,7 @@ int main(){
 
 //     EncryptionParameters parms(scheme_type::bgv);
     EncryptionParameters parms(scheme_type::bfv);
-    size_t poly_modulus_degree = 4096;
+    size_t poly_modulus_degree = 8192;
     parms.set_poly_modulus_degree(poly_modulus_degree);
 
     /*
@@ -16,7 +16,7 @@ int main(){
     we will demonstrate how to choose coeff_modulus that is more useful in BGV.
     */
 //     parms.set_coeff_modulus(CoeffModulus::BFVDefault(poly_modulus_degree));
-    parms.set_coeff_modulus(CoeffModulus::Create(poly_modulus_degree, {21, 22, 22, 22, 22}));
+    parms.set_coeff_modulus(CoeffModulus::Create(poly_modulus_degree, {22, 22, 22, 22, 22}));
     parms.set_plain_modulus(PlainModulus::Batching(poly_modulus_degree, 24));
 
 
