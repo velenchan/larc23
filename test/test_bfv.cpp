@@ -1,3 +1,4 @@
+#include <chrono>
 #include <seal/seal.h>
 #include "../src/helper.h"
 
@@ -6,9 +7,9 @@ using namespace std;
 
 int main(){
 
-//     EncryptionParameters parms(scheme_type::bgv);
-    EncryptionParameters parms(scheme_type::bfv);
-    size_t poly_modulus_degree = 8192;
+    EncryptionParameters parms(scheme_type::bgv);
+//     EncryptionParameters parms(scheme_type::bfv);
+    size_t poly_modulus_degree = 4096;
     parms.set_poly_modulus_degree(poly_modulus_degree);
 
     /*
@@ -16,8 +17,8 @@ int main(){
     we will demonstrate how to choose coeff_modulus that is more useful in BGV.
     */
 //     parms.set_coeff_modulus(CoeffModulus::BFVDefault(poly_modulus_degree));
-    parms.set_coeff_modulus(CoeffModulus::Create(poly_modulus_degree, {22, 22, 22, 22, 22}));
-    parms.set_plain_modulus(PlainModulus::Batching(poly_modulus_degree, 24));
+    parms.set_coeff_modulus(CoeffModulus::Create(poly_modulus_degree, {22, 22, 22, 22, 21}));
+    parms.set_plain_modulus(PlainModulus::Batching(poly_modulus_degree, 25));
 
 
     SEALContext context(parms);
@@ -84,6 +85,17 @@ int main(){
     cout << "    + noise budget in freshly encrypted x: " << decryptor.invariant_noise_budget(x_encrypted) << " bits"
          << endl;
 
+
+    auto t_size = 0;
+    for (size_t i = 0; i<4450; i++){
+        string file_name = "encrypted_result";
+        ofstream enc_result_stream(file_name, ios::binary);
+        auto size_ = x_encrypted.save(enc_result_stream);
+        t_size += size_;
+        enc_result_stream.close();
+    }
+    cout << "4450 fresh ciphertexts is of size " << t_size << " bytes" << endl;
+
      Plaintext x_decrypted;
      vector<int64_t> x_result;
      cout << "    + decryption of x_encrypted: ";
@@ -111,9 +123,17 @@ int main(){
      cout << "" << " ...... Correct." << endl;
 
 
+    auto local_beginning = std::chrono::high_resolution_clock::now();
+    for(size_t i = 0; i < 10000; i++){
+        Ciphertext x_square_encrypted;
+        evaluator.multiply(x_encrypted, x_encrypted, x_square_encrypted);
+    }
+    auto local_timing = std::chrono::high_resolution_clock::now() - local_beginning;
+    cout << "   + multiplication ... costs: " << (double)std::chrono::duration_cast<std::chrono::microseconds>(local_timing).count() / 1e6 << " seconds." << endl;
+
+
     Ciphertext x_square_encrypted;
     evaluator.square(x_encrypted, x_square_encrypted);
-
     cout << "    + size of encrypted x^2: " << x_square_encrypted.size() << endl;
 
     cout << "    + noise budget in encrypted x^2: " << decryptor.invariant_noise_budget(x_square_encrypted) << " bits"
@@ -132,10 +152,13 @@ int main(){
      print_vector(x_result);
      cout << "" << " ...... Correct." << endl;
 
-
-     
-     evaluator.rotate_columns_inplace(x_square_encrypted, galois_keys);
-     evaluator.rotate_rows_inplace(x_square_encrypted, -4, galois_keys);
+    local_beginning = std::chrono::high_resolution_clock::now();
+    for(size_t i = 0; i < 10000; i++){
+        // evaluator.rotate_columns_inplace(x_square_encrypted, galois_keys);
+        evaluator.rotate_rows_inplace(x_square_encrypted, i % slot_count/2, galois_keys);
+    }
+    local_timing = std::chrono::high_resolution_clock::now() - local_beginning;
+    cout << "   + rotation ... costs: " << (double)std::chrono::duration_cast<std::chrono::microseconds>(local_timing).count() / 1e6 << " seconds." << endl;
 
      cout << "    + size of encrypted x^2 after rotation: " << x_square_encrypted.size() << endl;
 
@@ -154,4 +177,5 @@ int main(){
 
 
     return 0;
+
 }
