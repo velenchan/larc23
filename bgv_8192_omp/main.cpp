@@ -9,7 +9,7 @@ using namespace seal;
 int main() {
 	omp_set_num_threads(8);
 	auto start_time = chrono::high_resolution_clock::now();
-	//Éú³Ébgv¼ÓÃÜ²ÎÊı
+	//ï¿½ï¿½ï¿½ï¿½bgvï¿½ï¿½ï¿½Ü²ï¿½ï¿½ï¿½
 	EncryptionParameters parms(scheme_type::bgv);
 	cout << endl << "bgv initialization ... " << endl;
 
@@ -48,34 +48,34 @@ int main() {
 	Evaluator evaluator(context);
 	BatchEncoder encoder(context);
 
-	/*²ÎÊıÁĞ±í*/
+	/*ï¿½ï¿½ï¿½ï¿½ï¿½Ğ±ï¿½*/
 	int size_tmp;
-	/*¿Í»§¶Ë*/
-	vector<matrix<int64_t>> allocat_matrix_task;//·ÖÅä¾ØÕó³Ë·¨ÈÎÎñ
-	vector<vector<matrix<int64_t>>> allocate_split_matrix,allocate_split_encode_matrix;//ÓÃÓÚ´æ·Å·ÖÅäºÃÈÎÎñµÄÇĞ¸î¾ØÕó
-	matrix<int64_t> client_matrix;//ÓÃÓÚ¶Á¿Í»§¶ËÊı¾İ
-	vector<matrix<int64_t>> split_matrix_result, encode_split_matrix;//ÓÃÓÚ´æ·ÅÇĞ¸î¾ØÕó¼°±àÂë¾ØÕóµÄÖĞ¼ä±äÁ¿
-	vector<vector<seal::Ciphertext>> client_cipher_matrix;//µ¥ÌõÃÜÎÄÊı¾İ
-	vector<vector<vector<seal::Ciphertext>>> client_cipher_matrix_all;//ËùÓĞÃÜÎÄÊı¾İ
-	string client_filename = client_data_dir;//¿Í»§¶ËÎÄ¼şÂ·¾¶
+	/*ï¿½Í»ï¿½ï¿½ï¿½*/
+	vector<matrix<int64_t>> allocat_matrix_task;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë·ï¿½ï¿½ï¿½ï¿½ï¿½
+	vector<vector<matrix<int64_t>>> allocate_split_matrix,allocate_split_encode_matrix;//ï¿½ï¿½ï¿½Ú´ï¿½Å·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¸ï¿½ï¿½ï¿½ï¿½
+	matrix<int64_t> client_matrix;//ï¿½ï¿½ï¿½Ú¶ï¿½ï¿½Í»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	vector<matrix<int64_t>> split_matrix_result, encode_split_matrix;//ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½Ğ¸ï¿½ï¿½ï¿½ó¼°±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¼ï¿½ï¿½ï¿½ï¿½
+	vector<vector<seal::Ciphertext>> client_cipher_matrix;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	vector<vector<vector<seal::Ciphertext>>> client_cipher_matrix_all;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	string client_filename = client_data_dir;//ï¿½Í»ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½Â·ï¿½ï¿½
 
-	/*Êı¾İ¿â¶Ë*/
-	matrix<int64_t> database_matrix;//ÓÃÓÚ¶ÁÊı¾İ¿â¶ËÊı¾İ
-	vector<matrix<int64_t>> database_split_matrix;//ÇĞ¸îÊı¾İ¿â¶ËÊı¾İ
-	vector<vector<seal::Ciphertext>> database_cipher_matrix;//ÇĞ¸î¾ØÕóÃÜÎÄÊı¾İ
-	string database_filename = database_data_dir;//¿Í»§¶ËÎÄ¼şÂ·¾¶
+	/*ï¿½ï¿½ï¿½İ¿ï¿½ï¿½*/
+	matrix<int64_t> database_matrix;//ï¿½ï¿½ï¿½Ú¶ï¿½ï¿½ï¿½ï¿½İ¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	vector<matrix<int64_t>> database_split_matrix;//ï¿½Ğ¸ï¿½ï¿½ï¿½ï¿½İ¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	vector<vector<seal::Ciphertext>> database_cipher_matrix;//ï¿½Ğ¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	string database_filename = database_data_dir;//ï¿½Í»ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½Â·ï¿½ï¿½
 
-	/*¼ÆËã¶Ë*/
-	vector<seal::Ciphertext> pre_database_cipher;//Êı¾İ¿â¶ËÔ¤´¦Àí½á¹ûÃÜÎÄ
-	vector<seal::Ciphertext> mul_result;//´æ·Å¼ÆËã½á¹û
-	vector<vector<seal::Ciphertext>> rotate_vector;//´æ·ÅĞı×ªÍêµÄ½á¹û
-	vector<vector<Ciphertext>> mul_vector;//´æ·Å³Ë·¨µÄÖĞ¼ä½á¹û
-	vector<Ciphertext> result_vector;//´æ·ÅÃ¿¸öbatchÔËËãÖ®ºóµÄ¼ÆËã½á¹û
-	seal::Ciphertext result;//´æ·Å×îºóµÄ¼ÆËã½á¹û
+	/*ï¿½ï¿½ï¿½ï¿½ï¿½*/
+	vector<seal::Ciphertext> pre_database_cipher;//ï¿½ï¿½ï¿½İ¿ï¿½ï¿½Ô¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	vector<seal::Ciphertext> mul_result;//ï¿½ï¿½Å¼ï¿½ï¿½ï¿½ï¿½ï¿½
+	vector<vector<seal::Ciphertext>> rotate_vector;//ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½Ä½ï¿½ï¿½
+	vector<vector<Ciphertext>> mul_vector;//ï¿½ï¿½Å³Ë·ï¿½ï¿½ï¿½ï¿½Ğ¼ï¿½ï¿½ï¿½
+	vector<Ciphertext> result_vector;//ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½batchï¿½ï¿½ï¿½ï¿½Ö®ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½
+	seal::Ciphertext result;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½
 
 
 	cout << "----------------- Client --------------------" << endl;
-	/*¶Á¿Í»§¶ËÊı¾İ*/
+	/*ï¿½ï¿½ï¿½Í»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	print_line(__LINE__);
 	cout << " Read Client Original Data" << endl;
 	read_data(client_matrix, client_filename, 16344, 400);
@@ -85,30 +85,30 @@ int main() {
 	//cout << allocat_matrix_task.size() << endl;
 
 	
-	/*ÇĞ¸î¾ØÕó*/
+	/*ï¿½Ğ¸ï¿½ï¿½ï¿½ï¿½*/
 	print_line(__LINE__);
 	cout << " Split Client Matrix" << endl;
 	allocate_split_matrix.resize(allocat_matrix_task.size());
 #pragma omp parallel for
 	for (int i = 0; i < allocat_matrix_task.size(); i++) {
-		allocat_matrix_task[i].resize(batch_size, 16384);//ÖØÖÃ¾ØÕó´óĞ¡
-		allocate_split_matrix[i] =split_matrix(allocat_matrix_task[i], parms);//ÇĞ¸î¾ØÕó	
+		allocat_matrix_task[i].resize(batch_size, 16384);//ï¿½ï¿½ï¿½Ã¾ï¿½ï¿½ï¿½ï¿½Ğ¡
+		allocate_split_matrix[i] =split_matrix(allocat_matrix_task[i], parms);//ï¿½Ğ¸ï¿½ï¿½ï¿½ï¿½	
 	}
 	cout << "       + Split Client Matrix Already" << endl;
 
-	/*±àÂë¾ØÕó*/
+	/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	print_line(__LINE__);
 	cout << " Encode Client Original Data" << endl;
 	size_tmp = allocate_split_matrix.size();
 	allocate_split_encode_matrix.resize(size_tmp);
 #pragma omp parallel for
 	for (int i = 0; i < size_tmp; i++) {
-		allocate_split_encode_matrix[i]=encode_split_client_matrix(allocate_split_matrix[i], batch_size, poly_modulus_degree_size);//±àÂëÇĞ¸î¾ØÕó
+		allocate_split_encode_matrix[i]=encode_split_client_matrix(allocate_split_matrix[i], batch_size, poly_modulus_degree_size);//ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¸ï¿½ï¿½ï¿½ï¿½
 	}
 	cout << "       + Encode Client Original Data Already" << endl;
 	
 
-	/*¼ÓÃÜÊı¾İ*/
+	/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	print_line(__LINE__);
 	cout << " Encrypt Client Original Data" << endl;
 	size_tmp = allocate_split_encode_matrix.size();
@@ -120,21 +120,21 @@ int main() {
 
 
 	cout << "----------------- Database --------------------" << endl;
-	/*¶ÁÊı¾İ¿â¶ËÊı¾İ*/
+	/*ï¿½ï¿½ï¿½ï¿½ï¿½İ¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	print_line(__LINE__);
 	cout << " Read Database Original Data" << endl;
 	read_data(database_matrix, database_filename, 16344, 2000);
 	database_matrix = database_matrix.transpose();
 	cout << "       + Read Database Original Data Already" << endl;
 
-	/*ÇĞ¸î¾ØÕó*/
+	/*ï¿½Ğ¸ï¿½ï¿½ï¿½ï¿½*/
 	print_line(__LINE__);
 	cout << " Split Database Matrix" << endl;
-	database_matrix.resize(2000, 16384);//ÖØÖÃ¾ØÕó´óĞ¡
-	database_split_matrix=split_matrix(database_matrix, parms);//ÇĞ¸î¾ØÕó
+	database_matrix.resize(2000, 16384);//ï¿½ï¿½ï¿½Ã¾ï¿½ï¿½ï¿½ï¿½Ğ¡
+	database_split_matrix=split_matrix(database_matrix, parms);//ï¿½Ğ¸ï¿½ï¿½ï¿½ï¿½
 	cout << "       + Split Database Matrix Already" << endl;
 
-	/*¼ÓÃÜÊı¾İ*/
+	/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	print_line(__LINE__);
 	cout << " Encrypt Database Original Data" << endl;
 	database_cipher_matrix=encrypte_split_matrix_parallel(database_split_matrix, encryptor, encoder);
@@ -142,17 +142,17 @@ int main() {
 
 
 	cout << "----------------- Evaluator --------------------" << endl;
-	/*½øĞĞÔ¤´¦Àí*/
-	/*step1.½«Êı¾İ¿â¶ËÏà¼Ó²¢¼õÈ¥2000*/
+	/*ï¿½ï¿½ï¿½ï¿½Ô¤ï¿½ï¿½ï¿½ï¿½*/
+	/*step1.ï¿½ï¿½ï¿½ï¿½ï¿½İ¿ï¿½ï¿½ï¿½ï¿½Ó²ï¿½ï¿½ï¿½È¥2000*/
 	print_line(__LINE__);
 	cout << " Preprocessing Database Ciphertext Data" << endl;
 	preprocessing_split_database_cipher(database_cipher_matrix, pre_database_cipher, parms, evaluator, encoder);
-	database_cipher_matrix.clear();//Çå¿ÕÊı¾İ¿âÊı¾İËùÕ¼ÄÚ´æ
+	database_cipher_matrix.clear();//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½İ¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ¼ï¿½Ú´ï¿½
 	cout << "       + Preprocessing Database Ciphertext Data Already" << endl;
 	cout << "           + Noise budget after add_many: " << decryptor.invariant_noise_budget(pre_database_cipher[0]) << " bits" << endl;
 	seal::Ciphertext cipher1;
 
-	/*step.2½«¿Í»§¶ËÊı¾İÈ«²¿¼õÈ¥1*/
+	/*step.2ï¿½ï¿½ï¿½Í»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½ï¿½ï¿½È¥1*/
 	print_line(__LINE__);
 	cout << " Preprocessing Client Ciphertext Data" << endl;
 	size_tmp = client_cipher_matrix_all.size();
@@ -163,13 +163,13 @@ int main() {
 	cout << "       + Preprocessing Client Ciphertext Data Already" << endl;
 	//cout << "           + Noise budget after add_many: " << decryptor.invariant_noise_budget(client_cipher_matrix[0][0]) << " bits" << endl;
 
-	/*Éú³ÉĞı×ªÃÜÎÄ*/
+	/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½*/
 	print_line(__LINE__);
 	cout << " Rotate vector Data" << endl;
 	rotate_vector_all(pre_database_cipher, rotate_vector, parms, evaluator, gal_keys);
 	cout << "       + Rotate vector Data Already" << endl;
 
-	/*¿Í»§¶Ë¾ØÕóºÍÏòÁ¿Ïà³Ë*/
+	/*ï¿½Í»ï¿½ï¿½Ë¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	print_line(__LINE__);
 	cout << " Multiply matrix vector Data" << endl;
 	size_tmp = client_cipher_matrix_all.size();
@@ -183,7 +183,7 @@ int main() {
 	cout << "       + Multiply matrix vector Data Already" << endl;
 	cout << "           + Noise budget after computing: " << decryptor.invariant_noise_budget(mul_vector[0][0]) << " bits" << endl;
 
-	/*½«µ¥ÌõÃÜÎÄµÄÄÚÈİÏà¼Ó*/
+	/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Äµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	print_line(__LINE__);
 	cout << " Add Each result Data" << endl;
 	for (int i = 0; i < mul_vector.size(); i++) {
@@ -194,14 +194,14 @@ int main() {
 	cout << "           + Noise budget after computing: " << decryptor.invariant_noise_budget(result) << " bits" << endl;
 	
 
-	/*½«ËùÓĞÃÜÎÄ½á¹ûÏà¼Ó*/
+	/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	print_line(__LINE__);
 	cout << " Add all result Data" << endl;
 	add_allocate_result(result_vector, result, evaluator, gal_keys, encoder);
 	cout << "       + Add all result Data Already" << endl;
 	cout << "           + Noise budget after computing: " << decryptor.invariant_noise_budget(result) << " bits" << endl;
 
-	/*½«½á¹û·ÅÈëÎÄ¼ş*/
+	/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½*/
 	print_line(__LINE__);
 	cout << " Write result to file" << endl;
 	decrypte_vector_result(result, decryptor, encoder);
@@ -209,6 +209,6 @@ int main() {
 
 	auto end_time = chrono::high_resolution_clock::now();
 	auto time_diff = chrono::duration_cast<chrono::microseconds>(end_time - start_time);
-	cout << "BGVºÄÊ±£º" << time_diff.count()/1000 << " ms" << "     Æ½¾ùÊ±¼ä£º" << time_diff.count() / (400*1000) << " ms" << endl;
+	cout << "total time: " << time_diff.count()/1e6 << " s" << "     agv. time per query: " << time_diff.count() / (400*1000) << " ms" << endl;
 
 }

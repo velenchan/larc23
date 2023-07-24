@@ -7,18 +7,19 @@ using namespace std;
 
 int main(){
 
-    EncryptionParameters parms(scheme_type::bgv);
-//     EncryptionParameters parms(scheme_type::bfv);
-    size_t poly_modulus_degree = 4096;
+    // EncryptionParameters parms(scheme_type::bgv);
+    EncryptionParameters parms(scheme_type::bfv);
+    size_t poly_modulus_degree = 8192;
     parms.set_poly_modulus_degree(poly_modulus_degree);
 
     /*
     We can certainly use BFVDefault coeff_modulus. In later parts of this example,
     we will demonstrate how to choose coeff_modulus that is more useful in BGV.
     */
-//     parms.set_coeff_modulus(CoeffModulus::BFVDefault(poly_modulus_degree));
+    // parms.set_coeff_modulus(CoeffModulus::BFVDefault(poly_modulus_degree));
     parms.set_coeff_modulus(CoeffModulus::Create(poly_modulus_degree, {22, 22, 22, 22, 21}));
-    parms.set_plain_modulus(PlainModulus::Batching(poly_modulus_degree, 25));
+    // parms.set_coeff_modulus(CoeffModulus::Create(poly_modulus_degree, {26, 26, 26, 26, 26}));
+    parms.set_plain_modulus(PlainModulus::Batching(poly_modulus_degree, 16));
 
 
     SEALContext context(parms);
@@ -124,7 +125,7 @@ int main(){
 
 
     auto local_beginning = std::chrono::high_resolution_clock::now();
-    for(size_t i = 0; i < 10000; i++){
+    for(size_t i = 0; i < 100; i++){
         Ciphertext x_square_encrypted;
         evaluator.multiply(x_encrypted, x_encrypted, x_square_encrypted);
     }
@@ -153,9 +154,10 @@ int main(){
      cout << "" << " ...... Correct." << endl;
 
     local_beginning = std::chrono::high_resolution_clock::now();
-    for(size_t i = 0; i < 10000; i++){
+    for(size_t i = 0; i < 1; i++){
         // evaluator.rotate_columns_inplace(x_square_encrypted, galois_keys);
-        evaluator.rotate_rows_inplace(x_square_encrypted, i % slot_count/2, galois_keys);
+        // evaluator.rotate_rows_inplace(x_square_encrypted, i % slot_count/2, galois_keys);
+        evaluator.rotate_rows_inplace(x_square_encrypted, 3, galois_keys);
     }
     local_timing = std::chrono::high_resolution_clock::now() - local_beginning;
     cout << "   + rotation ... costs: " << (double)std::chrono::duration_cast<std::chrono::microseconds>(local_timing).count() / 1e6 << " seconds." << endl;
