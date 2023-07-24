@@ -57,7 +57,7 @@ int main() {
 	cout << "bgv initialization ... yes" << endl;
 	cout << "QE: bgv initialization costs " << time_diff.count()/1e6 << " s" << endl;
 
-	auto qe_ee_time_start = chrono::high_resolution_clock::now();
+	
 	cout << endl << "----------------- Query Entity --------------------" << endl;
 
 	/*�����б�*/
@@ -90,11 +90,18 @@ int main() {
 	/*���ͻ�������*/
 	// print_line(__LINE__);
 	// cout << " Read Client Original Data" << endl;
+	auto qe_rd_time_start = chrono::high_resolution_clock::now();
 	cout << " Reading query data ... " << endl;
 	read_data(client_matrix, client_filename, 16344, 400);
 	// client_matrix = client_matrix.transpose();
 	// cout << "       + Read Client Original Data Already" << endl;
 	cout << " Reading query data ... yes" << endl;
+	auto qe_rd_time_end = chrono::high_resolution_clock::now();
+	time_diff = chrono::duration_cast<chrono::microseconds>(qe_rd_time_end - qe_rd_time_start);
+	cout << "QE: reading database costs: " << time_diff.count()/1e6 << " s" << endl << endl;
+
+
+	auto qe_ee_time_start = chrono::high_resolution_clock::now();
 	allocating_task(client_matrix, allocat_matrix_task);
 	//cout << allocat_matrix_task.size() << endl;
 

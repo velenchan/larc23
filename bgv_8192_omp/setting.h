@@ -1,7 +1,7 @@
 #pragma once
 #define poly_modulus_degree_size 8192
 #define NUM_THREADS 8
-#define CoeffModulus_vector {44,44,44,43,43}
+#define CoeffModulus_vector {43,43,44,44,44}
 // #define CoeffModulus_vector {34,34,34,34,34}
 // #define CoeffModulus_vector {32,32,32,32,32}
 #define PlainModulus_size 25
