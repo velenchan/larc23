@@ -11,7 +11,7 @@ int main() {
 	auto start_time = chrono::high_resolution_clock::now();
 	auto ini_time_start = chrono::high_resolution_clock::now();
 	cout << "----------------- Query Entity --------------------" << endl;
-	omp_set_num_threads(8);
+	omp_set_num_threads(NUM_THREADS);
 	//����bgv���ܲ���
 	EncryptionParameters parms(scheme_type::bgv);
 	cout  << "bgv initialization ... " << endl;

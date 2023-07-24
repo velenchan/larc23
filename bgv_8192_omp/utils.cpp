@@ -85,7 +85,7 @@ vector<Ciphertext> encrypte_matrix_parallel(matrix<int64_t>& A, seal::Encryptor&
     int row_size = A.get_rows();
     B.resize(row_size);
     // cout<<"row_size:  "<<row_size<<endl;
-     omp_set_num_threads(8);
+     omp_set_num_threads(NUM_THREADS);
 #pragma omp parallel for
     for (int i = 0; i < row_size; i++) {
         seal::Plaintext plain_tmp;
@@ -104,7 +104,7 @@ vector<vector<Ciphertext>> encrypte_split_matrix_parallel(vector<matrix<int64_t>
     vector<Ciphertext> tmp_cipher;
     destination.resize(A.size());
     // cout<<"A_size"<<A.size()<<endl;
-    //omp_set_num_threads(8);
+    //omp_set_num_threads(NUM_THREADS);
 //#pragma omp parallel for
     for (int i = 0; i < A.size(); i++) {
         destination[i]= encrypte_matrix_parallel(A[i], encryptor, encoder);
@@ -316,7 +316,7 @@ void encode_client_matrix(matrix<int64_t>& A, matrix<int64_t>& B, int m, int n)
 vector<matrix<int64_t>> encode_split_client_matrix(vector<matrix<int64_t>>& split_matrix, int m, int n)
 {
     vector<matrix<int64_t>> destination_split_matrix;
-    int split_length = split_matrix[0].get_cols();
+    // int split_length = split_matrix[0].get_cols();
     matrix<int64_t> tmp_matrix;
     for (int i = 0; i < split_matrix.size(); i++) {
         encode_client_matrix(split_matrix[i], tmp_matrix, m, split_matrix[i].get_cols());
@@ -333,6 +333,7 @@ void preprocessing_split_client_cipher(vector<vector<seal::Ciphertext>>& A, seal
 
     vector<int64_t> vector_tmp(parms.poly_modulus_degree(), -1);
     encoder.encode(vector_tmp, plain_tmp);
+    omp_set_num_threads(NUM_THREADS);
 #pragma omp parallel for
     for (int i = 0; i < A.size(); i++) {
         for (int j = 0; j < A[i].size(); j++) {
@@ -381,6 +382,7 @@ void preprocessing_split_database_cipher(vector<vector<seal::Ciphertext>>& A, ve
 {
     Ciphertext tmp;
     B.resize(A.size());
+    omp_set_num_threads(NUM_THREADS);
 #pragma omp parallel for
     for (int i = 0; i < A.size(); i++) {
         B[i]=preprocessing_database_cipher(A[i], parms, evaluator, encoder);
@@ -395,6 +397,7 @@ void rotate_vector_all(vector<Ciphertext>& v, vector<vector<Ciphertext>>& destin
     vector<seal::Ciphertext> rotate_vector(rotate_inside_size);//�����ת��Ľ��
 
     destination.resize(v.size());
+    omp_set_num_threads(NUM_THREADS);
     for (int i = 0; i < v.size(); i++) {
         #pragma omp parallel for
         for (int j = 0; j < rotate_inside_size; j++) {
@@ -425,8 +428,8 @@ void matrix_multiply_vector(vector<seal::Ciphertext>& A, vector<Ciphertext>& rot
 
 
     int length = parms.poly_modulus_degree() / 2;
-    int sum_rotate = 0;
-    int sum_mul = 0;
+    // int sum_rotate = 0;
+    // int sum_mul = 0;
 
     seal::Ciphertext tmp;//����м���
     seal::Ciphertext group_cipher;//�ֿ����ĵĽ��
@@ -445,7 +448,7 @@ void matrix_multiply_vector(vector<seal::Ciphertext>& A, vector<Ciphertext>& rot
             //cout << i << "   " << j << endl;
             evaluator.multiply(rotate_vector[j], A[i * rotate_inside_size + j], tmp);
             cipher_tmp.push_back(tmp);
-            sum_mul += 1;
+            // sum_mul += 1;
         }
         evaluator.add_many(cipher_tmp, tmp);
         evaluator.relinearize_inplace(tmp, relin_keys);
@@ -456,7 +459,7 @@ void matrix_multiply_vector(vector<seal::Ciphertext>& A, vector<Ciphertext>& rot
         /*decryptor.decrypt(tmp, plain_tmp);
         encoder.decode(plain_tmp, vec_tmp);
         print_vector(vec_tmp);*/
-        sum_rotate += 1;
+        // sum_rotate += 1;
     }
     evaluator.add_many(result_vector, group_cipher);
     //cout << "   +noise rotate" << decryptor.invariant_noise_budget(group_cipher) << "bits" << endl;
@@ -467,7 +470,7 @@ void matrix_multiply_vector(vector<seal::Ciphertext>& A, vector<Ciphertext>& rot
         seal::Ciphertext group_tmp;
         evaluator.rotate_rows(group_cipher, pow(2, i) * rotate_size, gal_keys, group_tmp);
         evaluator.add_inplace(group_cipher, group_tmp);
-        sum_rotate += 1;
+        // sum_rotate += 1;
     }
     destination = group_cipher;
     //cout << "��ת������" << sum_rotate << "  �˷�������" << sum_mul << endl;
@@ -511,7 +514,8 @@ void add_allocate_result(vector<Ciphertext>& A, Ciphertext& destination, seal::E
 {
      seal::Plaintext plain_tmp;
     // cout<<"A.size:"<<A.size()<<endl;
-    //#pragma omp parallel for
+//     omp_set_num_threads(NUM_THREADS);
+// #pragma omp parallel for
     for (int i = 0; i < A.size(); i++) {
         int start_index = i * batch_size;
         int end_index = (i + 1) * batch_size;
