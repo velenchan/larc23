@@ -1,8 +1,10 @@
 #include "utils.h"
+#include <sys/resource.h>
+using namespace std;
 
 /*
-* ¶ÁÔ­Ê¼Êý¾Ý
-* ÊäÈë£º¾ØÕóMa£¬ÎÄ¼þÂ·¾¶filename£¬¾ØÕóÐÐÊým£¬¾ØÕóÁÐÊýn
+* ï¿½ï¿½Ô­Ê¼ï¿½ï¿½ï¿½ï¿½
+* ï¿½ï¿½ï¿½ë£ºï¿½ï¿½ï¿½ï¿½Maï¿½ï¿½ï¿½Ä¼ï¿½Â·ï¿½ï¿½filenameï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½mï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½n
 */
 void read_data(matrix<int64_t>& Ma, string& filename, int m, int n)
 {
@@ -14,19 +16,19 @@ void read_data(matrix<int64_t>& Ma, string& filename, int m, int n)
     }
 
     string line;
-    Ma.resize(m, n); //×¢ÒâÐèÒªresize£¬ºÍtxtÎÄ¼þÖÐ¾ØÕóµÄÎ¬¶È¶ÔÓ¦
+    Ma.resize(m, n); //×¢ï¿½ï¿½ï¿½ï¿½Òªresizeï¿½ï¿½ï¿½ï¿½txtï¿½Ä¼ï¿½ï¿½Ð¾ï¿½ï¿½ï¿½ï¿½Î¬ï¿½È¶ï¿½Ó¦
     for (int i = 0; i < m; i++)
     {
         getline(in, line);
         int nSPos = 0, nEPos = 0;
-        nSPos = line.find('\t', nSPos); //µÚ1¸ötab¼ü
+        nSPos = line.find('\t', nSPos); //ï¿½ï¿½1ï¿½ï¿½tabï¿½ï¿½
         nSPos++;
-        nSPos = line.find('\t', nSPos); //µÚ2¸ötab¼ü
+        nSPos = line.find('\t', nSPos); //ï¿½ï¿½2ï¿½ï¿½tabï¿½ï¿½
         nSPos++;
-        nSPos = line.find('\t', nSPos); //µÚ3¸ötab¼ü
+        nSPos = line.find('\t', nSPos); //ï¿½ï¿½3ï¿½ï¿½tabï¿½ï¿½
         nSPos++;
-        nSPos = line.find('\t', nSPos); //µÚ4¸ötab¼ü
-        // nSPos++;//µ½µÚÎåÏî¿ªÊ¼µÄÎ»ÖÃ
+        nSPos = line.find('\t', nSPos); //ï¿½ï¿½4ï¿½ï¿½tabï¿½ï¿½
+        // nSPos++;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½î¿ªÊ¼ï¿½ï¿½Î»ï¿½ï¿½
         int j = 0;
         while (1)
         {
@@ -46,9 +48,9 @@ void read_data(matrix<int64_t>& Ma, string& filename, int m, int n)
 }
 
 /*
-* ¼ÓÃÜÊý¾Ý
-* ÊäÈë£º¾ØÕóA
-* Êä³ö£ºÃÜÎÄ¾ØÕóB
+* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+* ï¿½ï¿½ï¿½ë£ºï¿½ï¿½ï¿½ï¿½A
+* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¾ï¿½ï¿½ï¿½B
 */
 void encrypte_matrix(matrix<int64_t>& A, vector<Ciphertext>& B, seal::Encryptor& encryptor, seal::BatchEncoder& encoder)
 {
@@ -81,12 +83,15 @@ vector<Ciphertext> encrypte_matrix_parallel(matrix<int64_t>& A, seal::Encryptor&
 {
     vector<Ciphertext> B;
     int row_size = A.get_rows();
-    seal::Plaintext plain_tmp;
-    seal::Ciphertext cipher_tmp;
     B.resize(row_size);
-
+    // cout<<"row_size:  "<<row_size<<endl;
+     omp_set_num_threads(8);
+#pragma omp parallel for
     for (int i = 0; i < row_size; i++) {
+        seal::Plaintext plain_tmp;
+        seal::Ciphertext cipher_tmp;
         encoder.encode(A.get_row(i), plain_tmp);
+        //cout<<"....."<<endl;
         encryptor.encrypt(plain_tmp, cipher_tmp);
         B[i] = cipher_tmp;
     }
@@ -98,7 +103,9 @@ vector<vector<Ciphertext>> encrypte_split_matrix_parallel(vector<matrix<int64_t>
     vector<vector<Ciphertext>> destination;
     vector<Ciphertext> tmp_cipher;
     destination.resize(A.size());
-#pragma omp parallel for
+    // cout<<"A_size"<<A.size()<<endl;
+    //omp_set_num_threads(8);
+//#pragma omp parallel for
     for (int i = 0; i < A.size(); i++) {
         destination[i]= encrypte_matrix_parallel(A[i], encryptor, encoder);
     }
@@ -106,8 +113,8 @@ vector<vector<Ciphertext>> encrypte_split_matrix_parallel(vector<matrix<int64_t>
 }
 
 /*
-* ÇÐ¸î¾ØÕó
-* ÊäÈë£º¾ØÕóA£¬²ÎÊýparms
+* ï¿½Ð¸ï¿½ï¿½ï¿½ï¿½
+* ï¿½ï¿½ï¿½ë£ºï¿½ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½ï¿½parms
 */
 vector<matrix<int64_t>> split_matrix(matrix<int64_t>& A, seal::EncryptionParameters& parms)
 {
@@ -139,7 +146,7 @@ vector<matrix<int64_t>> split_matrix(matrix<int64_t>& A, seal::EncryptionParamet
 }
 
 /*
-* ½âÃÜ½á¹û
+* ï¿½ï¿½ï¿½Ü½ï¿½ï¿½
 */
 void decrypte_vector_result(seal::Ciphertext& result, seal::Decryptor& decryptor, seal::BatchEncoder& encoder)
 {
@@ -163,7 +170,7 @@ void client_key_gen()
 {
     cout << endl << "bgv initialization ... " << endl;
 
-    //Éú³Éckks¼ÓÃÜ²ÎÊý
+    //ï¿½ï¿½ï¿½ï¿½ckksï¿½ï¿½ï¿½Ü²ï¿½ï¿½ï¿½
     EncryptionParameters parms(scheme_type::bgv);
 
     size_t poly_modulus_degree = 8192;
@@ -272,23 +279,23 @@ void client_key_gen(seal::EncryptionParameters& parms, seal::PublicKey& public_k
 }
 
 /*
-* ±àÂë¾ØÕó
-* ÊäÈë£º¾ØÕóA£¬ÐÐÊým£¬ÁÐÊýn
-* Êä³ö£º±àÂë¾ØÕóB
+* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+* ï¿½ï¿½ï¿½ë£ºï¿½ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½ï¿½mï¿½ï¿½ï¿½ï¿½ï¿½ï¿½n
+* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½B
 */
 void encode_client_matrix(matrix<int64_t>& A, matrix<int64_t>& B, int m, int n)
 {
-    /*ÖØÖÃ¾ØÕó´óÐ¡*/
+    /*ï¿½ï¿½ï¿½Ã¾ï¿½ï¿½ï¿½ï¿½Ð¡*/
     B.resize(m, n);
 
     int rotate_outside_size = ceil(sqrt(m));
     int rotate_inside_size = ceil(double(m) / double(rotate_outside_size));
 
-    /*Ðý×ª³¤¶È*/
+    /*ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½*/
     int length = 1;
 
 
-    /*±àÂë¾ØÕó*/
+    /*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
     for (int i = 0; i < m; i++) {
         length = (i / rotate_outside_size) * rotate_inside_size;
         for (int j = 0; j < n; j++) {
@@ -304,7 +311,7 @@ void encode_client_matrix(matrix<int64_t>& A, matrix<int64_t>& B, int m, int n)
 }
 
 /*
-* ¶Ô·Ö¸î¾ØÕó½øÐÐ±àÂë
+* ï¿½Ô·Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½ï¿½ï¿½
 */
 vector<matrix<int64_t>> encode_split_client_matrix(vector<matrix<int64_t>>& split_matrix, int m, int n)
 {
@@ -334,7 +341,7 @@ void preprocessing_split_client_cipher(vector<vector<seal::Ciphertext>>& A, seal
     }
 }
 /*
-* ·ÖÅäÈÎÎñ
+* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 */
 void allocating_task(matrix<int64_t>& A, vector<matrix<int64_t>>& B)
 {
@@ -385,13 +392,14 @@ void rotate_vector_all(vector<Ciphertext>& v, vector<vector<Ciphertext>>& destin
     int rotate_size = batch_size;
     int rotate_outside_size = ceil(sqrt(rotate_size));
     int rotate_inside_size = ceil(double(rotate_size) / double(rotate_outside_size));
-    seal::Ciphertext tmp;//´æ·ÅÖÐ¼ä½á¹û
-    vector<seal::Ciphertext> rotate_vector(rotate_inside_size);//´æ·ÅÐý×ªºóµÄ½á¹û
+    vector<seal::Ciphertext> rotate_vector(rotate_inside_size);//ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½Ä½ï¿½ï¿½
 
     destination.resize(v.size());
     for (int i = 0; i < v.size(); i++) {
+        #pragma omp parallel for
         for (int j = 0; j < rotate_inside_size; j++) {
             //cout << j << endl;
+            seal::Ciphertext tmp;
             evaluator.rotate_rows(v[i], j, gal_keys, tmp);
             rotate_vector[j] = tmp;
         }
@@ -404,9 +412,9 @@ void rotate_vector_all(vector<Ciphertext>& v, vector<vector<Ciphertext>>& destin
 
 
 /*
-* ¼ÆËãÃÜÎÄ
-* ÊäÈë£ºÃÜÎÄ¾ØÕóA£¬ÃÜÎÄÏòÁ¿v£¬½á¹ûdestination£¬¼ÆËãÆ÷evaluator£¬Ðý×ªÃÜÔ¿gal_keys£¬ÏßÐÔÃÜÔ¿relin_keys
-* Êä³ö£ºÃÜÎÄdestination
+* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+* ï¿½ï¿½ï¿½ë£ºï¿½ï¿½ï¿½Ä¾ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½vï¿½ï¿½ï¿½ï¿½ï¿½destinationï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½evaluatorï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½Ô¿gal_keysï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¿relin_keys
+* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½destination
 */
 void matrix_multiply_vector(vector<seal::Ciphertext>& A, vector<Ciphertext>& rotate_vector, Ciphertext& destination, seal::EncryptionParameters& parms, seal::Evaluator& evaluator, seal::GaloisKeys& gal_keys, seal::RelinKeys& relin_keys)
 {
@@ -420,19 +428,19 @@ void matrix_multiply_vector(vector<seal::Ciphertext>& A, vector<Ciphertext>& rot
     int sum_rotate = 0;
     int sum_mul = 0;
 
-    seal::Ciphertext tmp;//´æ·ÅÖÐ¼ä½á¹û
-    seal::Ciphertext group_cipher;//·Ö¿éÃÜÎÄµÄ½á¹û
-    vector<seal::Ciphertext> result_vector;//´æ·Å×îºóµÄ¼ÆËã½á¹û
+    seal::Ciphertext tmp;//ï¿½ï¿½ï¿½ï¿½Ð¼ï¿½ï¿½ï¿½
+    seal::Ciphertext group_cipher;//ï¿½Ö¿ï¿½ï¿½ï¿½ï¿½ÄµÄ½ï¿½ï¿½
+    vector<seal::Ciphertext> result_vector;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½
 
-    /*ÖÐ¼ä½á¹û*/
+    /*ï¿½Ð¼ï¿½ï¿½ï¿½*/
     seal::Plaintext plain_tmp;
     vector<int64_t> vec_tmp;
 
 
-    /*Íâ²ãÐý×ª*/
+    /*ï¿½ï¿½ï¿½ï¿½ï¿½×ª*/
     for (int i = 0; i < rotate_outside_size; i++) {
 
-        vector<seal::Ciphertext> cipher_tmp;//´æ´¢ÖÐ¼ä½á¹û
+        vector<seal::Ciphertext> cipher_tmp;//ï¿½æ´¢ï¿½Ð¼ï¿½ï¿½ï¿½
         for (int j = 0; j < rotate_inside_size; j++) {
             //cout << i << "   " << j << endl;
             evaluator.multiply(rotate_vector[j], A[i * rotate_inside_size + j], tmp);
@@ -453,7 +461,7 @@ void matrix_multiply_vector(vector<seal::Ciphertext>& A, vector<Ciphertext>& rot
     evaluator.add_many(result_vector, group_cipher);
     //cout << "   +noise rotate" << decryptor.invariant_noise_budget(group_cipher) << "bits" << endl;
 
-    /*·Ö×éÇóºÍ*/
+    /*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
     for (int i = 0; i < log2(length / rotate_size); i++) {
         //cout << pow(2, i) * rotate_size << endl;
         seal::Ciphertext group_tmp;
@@ -462,7 +470,7 @@ void matrix_multiply_vector(vector<seal::Ciphertext>& A, vector<Ciphertext>& rot
         sum_rotate += 1;
     }
     destination = group_cipher;
-    //cout << "Ðý×ª´ÎÊý£º" << sum_rotate << "  ³Ë·¨´ÎÊý£º" << sum_mul << endl;
+    //cout << "ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½" << sum_rotate << "  ï¿½Ë·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½" << sum_mul << endl;
 }
 
 vector<Ciphertext> matrix_multiply_split_vector(vector<vector<seal::Ciphertext>>& A, vector<vector<Ciphertext>>& v, seal::EncryptionParameters& parms, seal::Evaluator& evaluator, seal::GaloisKeys& gal_keys, seal::RelinKeys& relin_keys)
@@ -489,20 +497,25 @@ void matrix_multiply_split_vector(vector<vector<seal::Ciphertext>>& A, vector<ve
     }
 }
 
-void add_vector_result(vector<Ciphertext>& A, Ciphertext& destination, seal::Evaluator& evaluator, seal::GaloisKeys& gal_keys)
+Ciphertext  add_vector_result(vector<Ciphertext>& A,  seal::Evaluator& evaluator, seal::GaloisKeys& gal_keys)
 {
+    seal::Ciphertext destination;
     seal::Ciphertext tmp;
     evaluator.add_many(A, destination);
     evaluator.rotate_columns(destination, gal_keys, tmp);
     evaluator.add_inplace(destination, tmp);
+    return destination;
 }
 
 void add_allocate_result(vector<Ciphertext>& A, Ciphertext& destination, seal::Evaluator& evaluator, seal::GaloisKeys& gal_keys, seal::BatchEncoder& encoder)
 {
-    seal::Plaintext plain_tmp;
+     seal::Plaintext plain_tmp;
+    // cout<<"A.size:"<<A.size()<<endl;
+    //#pragma omp parallel for
     for (int i = 0; i < A.size(); i++) {
         int start_index = i * batch_size;
         int end_index = (i + 1) * batch_size;
+       
         //cout << start_index << "  " << end_index << endl;
         vector<int64_t> tmp(poly_modulus_degree_size, 0);
         for (int j = start_index; j < end_index; j++) {
@@ -518,3 +531,20 @@ void add_allocate_result(vector<Ciphertext>& A, Ciphertext& destination, seal::E
     evaluator.add_many(A, destination);
 }
 
+long int memory_usage()
+{
+    struct rusage usage;
+
+    if (!getrusage(RUSAGE_SELF, &usage))
+    {
+#ifndef __APPLE__
+        return usage.ru_maxrss * 1000;
+#else
+        return usage.ru_maxrss;
+#endif
+    }
+    else
+    {
+        return -1;
+    }
+}

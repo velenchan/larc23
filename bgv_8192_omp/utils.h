@@ -14,63 +14,65 @@ using namespace std;
 using namespace seal;
 
 /*
-* ¹«¹²¹¦ÄÜ
+* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 */
 
-//¶ÁÊý¾Ý
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 void read_data(matrix<int64_t>& Ma, string& filename, int m, int n);
 
-//¼ÓÃÜ¾ØÕó
+//ï¿½ï¿½ï¿½Ü¾ï¿½ï¿½ï¿½
 void encrypte_matrix(matrix<int64_t>& A, vector<Ciphertext>& B, seal::Encryptor& encryptor, seal::BatchEncoder& encoder);
 vector<vector<Ciphertext>> encrypte_split_matrix(vector<matrix<int64_t>>& A, seal::Encryptor& encryptor, seal::BatchEncoder& encoder);
 vector<Ciphertext> encrypte_matrix_parallel(matrix<int64_t>& A,  seal::Encryptor& encryptor, seal::BatchEncoder& encoder);
 vector<vector<Ciphertext>> encrypte_split_matrix_parallel(vector<matrix<int64_t>>& A, seal::Encryptor& encryptor, seal::BatchEncoder& encoder);
 
-//ÇÐ¸î¾ØÕó
+//ï¿½Ð¸ï¿½ï¿½ï¿½ï¿½
 vector<matrix<int64_t>> split_matrix(matrix<int64_t>& A, seal::EncryptionParameters& parms);
 
-//½âÃÜÃÜÎÄ
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 void decrypte_vector_result(seal::Ciphertext& result, seal::Decryptor& decryptor, seal::BatchEncoder& encoder);
 
 
 /*
-* ¿Í»§¶Ë¹¦ÄÜ
+* ï¿½Í»ï¿½ï¿½Ë¹ï¿½ï¿½ï¿½
 */
 
-//Éú³É²¢¹¹ÔìÔ¿³×
+//ï¿½ï¿½ï¿½É²ï¿½ï¿½ï¿½ï¿½ï¿½Ô¿ï¿½ï¿½
 void client_key_gen();
 void client_key_gen( seal::EncryptionParameters& parms, seal::PublicKey& public_key, seal::SecretKey& secret_key, seal::RelinKeys& relin_keys, seal::GaloisKeys& gal_keys);
 
-//±àÂë¾ØÕó
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 void encode_client_matrix(matrix<int64_t>& A, matrix<int64_t>& B, int m, int n);
 vector<matrix<int64_t>> encode_split_client_matrix(vector<matrix<int64_t>>& split_matrix, int m, int n);
 
-//Ô¤´¦Àí¿Í»§¶ËÃÜÎÄ
+//Ô¤ï¿½ï¿½ï¿½ï¿½ï¿½Í»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 void preprocessing_split_client_cipher(vector<vector<seal::Ciphertext>>& A, seal::EncryptionParameters& parms, seal::Evaluator& evaluator, seal::BatchEncoder& encoder);
 
-//·ÖÅä¾ØÕó
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 void allocating_task(matrix<int64_t>& A, vector<matrix<int64_t>>& B);
 
 /*
-* Êý¾Ý¿â¶Ë¹¦ÄÜ
+* ï¿½ï¿½ï¿½Ý¿ï¿½Ë¹ï¿½ï¿½ï¿½
 */
 
-//Ô¤´¦ÀíÊý¾Ý¿â¶ËÃÜÎÄ
+//Ô¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 Ciphertext preprocessing_database_cipher(vector<seal::Ciphertext>& A, seal::EncryptionParameters& parms, seal::Evaluator& evaluator, seal::BatchEncoder& encoder);
 void preprocessing_split_database_cipher(vector<vector<seal::Ciphertext>>& A, vector<Ciphertext>& B, seal::EncryptionParameters& parms, seal::Evaluator& evaluator, seal::BatchEncoder& encoder);
 
 /*
-* ¼ÆËã¶Ë¹¦ÄÜ
+* ï¿½ï¿½ï¿½ï¿½Ë¹ï¿½ï¿½ï¿½
 */
-//Ðý×ªËùÓÐÃÜÎÄ
+//ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 void rotate_vector_all(vector<Ciphertext>& v, vector<vector<Ciphertext>>& destination, seal::EncryptionParameters& parms, seal::Evaluator& evaluator, seal::GaloisKeys& gal_keys);
 
-//ÃÜÎÄ¾ØÕó³ËÃÜÎÄ¾ØÕó
+//ï¿½ï¿½ï¿½Ä¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¾ï¿½ï¿½ï¿½
 void matrix_multiply_vector(vector<seal::Ciphertext>& A, vector<Ciphertext>& rotate_vector, Ciphertext& destination, seal::EncryptionParameters& parms, seal::Evaluator& evaluator, seal::GaloisKeys& gal_keys, seal::RelinKeys& relin_keys);
 vector<Ciphertext> matrix_multiply_split_vector(vector<vector<seal::Ciphertext>>& A, vector<vector<Ciphertext>>& v, seal::EncryptionParameters& parms, seal::Evaluator& evaluator, seal::GaloisKeys& gal_keys, seal::RelinKeys& relin_keys);
 void matrix_multiply_split_vector(vector<vector<seal::Ciphertext>>& A, vector<vector<Ciphertext>>& v, vector<Ciphertext> &destination, seal::EncryptionParameters& parms, seal::Evaluator& evaluator, seal::GaloisKeys& gal_keys, seal::RelinKeys& relin_keys);
-//½«µ¥ÌõÃÜÎÄ½á¹ûÏà¼Ó
-void add_vector_result(vector<Ciphertext>& A, Ciphertext& destination, seal::Evaluator& evaluator, seal::GaloisKeys& gal_keys);
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä½ï¿½ï¿½ï¿½ï¿½ï¿½
+Ciphertext add_vector_result(vector<Ciphertext>& A, seal::Evaluator& evaluator, seal::GaloisKeys& gal_keys);
 
-//½«ËùÓÐÈÎÎñµÄ½á¹ûÏà¼Ó
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä½ï¿½ï¿½ï¿½ï¿½ï¿½
 void add_allocate_result(vector<Ciphertext>& A, Ciphertext& destination, seal::Evaluator& evaluator, seal::GaloisKeys& gal_keys,seal::BatchEncoder &encoder);
+
+long int memory_usage();

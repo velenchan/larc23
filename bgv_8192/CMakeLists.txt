@@ -1,20 +1,24 @@
 cmake_minimum_required(VERSION 3.13)
 
+## We must specify the C and C++ compilers before the project command
+set(CMAKE_C_COMPILER "/usr/bin/clang")
+set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
+set(CMAKE_CXX_FLAGS "-Wall")
+set(CMAKE_CXX_STANDARD 17)
+
 project(IDASH23)
 
 
-set(CMAKE_CXX_FLAGS "-Wall")
-set(CMAKE_CXX_STANDARD 17)
+
 
 # Import Microsoft SEAL
 
 find_package(SEAL 4.1.1 EXACT REQUIRED
               PATHS /usr/local # for Linux
-              PATHS /opt/homebrew/Cellar # for Mac OS
             ) 
 
 
-set(IDASH_SOURCE_DIR ${PROJECT_SOURCE_DIR}/larc_v2)
+set(IDASH_SOURCE_DIR ${PROJECT_SOURCE_DIR})
 
 add_executable(IDASH23 
                 ${IDASH_SOURCE_DIR}/main.cpp

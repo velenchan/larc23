@@ -9,6 +9,8 @@ using namespace seal;
 int main() {
 	
 	auto start_time = chrono::high_resolution_clock::now();
+
+	auto ini_time_start = chrono::high_resolution_clock::now();
 	//����bgv���ܲ���
 	EncryptionParameters parms(scheme_type::bgv);
 	cout << endl << "bgv initialization ... " << endl;
@@ -41,12 +43,25 @@ int main() {
 	keygen.create_galois_keys(gal_keys);
 	cout << " serializable galois key ... yes" << endl;
 
-	cout << "ckks initialization ... ok" << endl;
+	
 
 	Encryptor encryptor(context, public_key);
 	Decryptor decryptor(context, secret_key);
 	Evaluator evaluator(context);
 	BatchEncoder encoder(context);
+
+	cout << "BGV initialization ... ok" << endl;
+	auto ini_time_end = chrono::high_resolution_clock::now();
+	auto time_diff = chrono::duration_cast<chrono::microseconds>(ini_time_end - ini_time_start);
+	cout << "BGV initialzation time: " << time_diff.count()/1e6 << " s" << endl;
+	
+
+
+	auto qe_ee_time_start = chrono::high_resolution_clock::now();
+
+	cout << "----------------- Query Entity --------------------" << endl;
+	// cout << "QE encodes and encrypts the query data ... " << endl;
+
 
 	/*�����б�*/
 	/*�ͻ���*/
@@ -73,20 +88,20 @@ int main() {
 	seal::Ciphertext result;//������ļ�����
 
 
-	cout << "----------------- Client --------------------" << endl;
+	
 	/*���ͻ�������*/
-	print_line(__LINE__);
-	cout << " Read Client Original Data" << endl;
+	// print_line(__LINE__);
+	cout << " Read query data ... " << endl;
 	read_data(client_matrix, client_filename, 16344, 400);
 	client_matrix = client_matrix.transpose();
-	cout << "       + Read Client Original Data Already" << endl;
+	// cout << "       + Read Client Original Data Already" << endl;
 	allocating_task(client_matrix, allocat_matrix_task);
 	//cout << allocat_matrix_task.size() << endl;
 
 	
 	/*�и����*/
-	print_line(__LINE__);
-	cout << " Split Client Matrix" << endl;
+	// print_line(__LINE__);
+	// cout << " Split Client Matrix" << endl;
 	allocate_split_matrix.resize(allocat_matrix_task.size());
 	for (int i = 0; i < allocat_matrix_task.size(); i++) {
 		allocat_matrix_task[i].resize(batch_size, 16384);//���þ����С
@@ -96,11 +111,11 @@ int main() {
 		//cout << split_matrix_result.size() << endl;
 		//cout << split_matrix_result[1].get_rows() << "   " << split_matrix_result[1].get_cols() << endl;
 	}
-	cout << "       + Split Client Matrix Already" << endl;
+	// cout << "       + Split Client Matrix Already" << endl;
 
 	/*�������*/
-	print_line(__LINE__);
-	cout << " Encode Client Original Data" << endl;
+	// print_line(__LINE__);
+	cout << " Encode query data ... " << endl;
 	for (int i = 0; i < allocate_split_matrix.size(); i++) {
 		//cout << allocate_split_matrix[i].size() << endl;
 		encode_split_client_matrix(allocate_split_matrix[i], encode_split_matrix, batch_size, poly_modulus_degree_size);//�����и����
@@ -109,108 +124,137 @@ int main() {
 		allocate_split_encode_matrix.push_back(encode_split_matrix);
 		encode_split_matrix.clear();
 	}
-	cout << "       + Encode Client Original Data Already" << endl;
+	// cout << "       + Encode Client Original Data Already" << endl;
 	allocat_matrix_task.clear();
 	encode_split_matrix.clear();
 
 	/*��������*/
-	print_line(__LINE__);
-	cout << " Encrypt Client Original Data" << endl;
+	// print_line(__LINE__);
+	
+	cout << " Encrypt query data ... " << endl;
 	for (int i = 0; i < allocate_split_encode_matrix.size(); i++) {
 		//cout << allocate_split_encode_matrix[i].size() << endl;
 		encrypte_split_matrix(allocate_split_encode_matrix[i], client_cipher_matrix, encryptor, encoder);
 		client_cipher_matrix_all.push_back(client_cipher_matrix);
 		//cout << client_cipher_matrix.size() << endl;
 	}
-	cout << "       + Encrypt Client Original Data Already" << endl;
+	// cout << "       + Encrypt Client Original Data Already" << endl;
 	allocate_split_encode_matrix.clear();
 	client_cipher_matrix.clear();
 
+	auto qe_ee_time_end = chrono::high_resolution_clock::now();
+	time_diff = chrono::duration_cast<chrono::microseconds>(qe_ee_time_end - qe_ee_time_start);
+	cout << "QE encodes and encrypts the query data: " << time_diff.count()/1e6 << " s" << endl;
 
-	cout << "----------------- Database --------------------" << endl;
+
+	// auto de_ee_time_start = chrono::high_resolution_clock::now();
+
+	cout << "----------------- Database Entity --------------------" << endl;
 	/*�����ݿ������*/
-	print_line(__LINE__);
-	cout << " Read Database Original Data" << endl;
+	// print_line(__LINE__);
+	cout << " Read database  data ... " << endl;
 	read_data(database_matrix, database_filename, 16344, 2000);
 	database_matrix = database_matrix.transpose();
-	cout << "       + Read Database Original Data Already" << endl;
+	// cout << "       + Read Database Original Data Already" << endl;
 
 	/*�и����*/
-	print_line(__LINE__);
-	cout << " Split Database Matrix" << endl;
+	// print_line(__LINE__);
+	cout << " Encode database data ... " << endl;
 	database_matrix.resize(2000, 16384);//���þ����С
 	split_matrix(database_matrix, database_split_matrix, parms);//�и����
-	cout << "       + Split Database Matrix Already" << endl;
+	// cout << "       + Split Database Matrix Already" << endl;
 
 	/*��������*/
-	print_line(__LINE__);
-	cout << " Encrypt Database Original Data" << endl;
+	// print_line(__LINE__);
+	auto de_ee_time_start = chrono::high_resolution_clock::now();
+	cout << " Encrypt database data ... " << endl;
 	encrypte_split_matrix(database_split_matrix, database_cipher_matrix, encryptor, encoder);
-	cout << "       + Encrypt Database Original Data Already" << endl;
+	// cout << "       + Encrypt Database Original Data Already" << endl;
+
+	auto de_ee_time_end = chrono::high_resolution_clock::now();
+	time_diff = chrono::duration_cast<chrono::microseconds>(de_ee_time_end - de_ee_time_start);
+	cout << "DE encodes and encrypts the database data: " << time_diff.count()/1e6 << " s" << endl;
 
 
-	cout << "----------------- Evaluator --------------------" << endl;
+
+	auto ee_ee_time_start = chrono::high_resolution_clock::now();
+	cout << "----------------- Evaluator Entity --------------------" << endl;
 	/*����Ԥ����*/
 	/*step1.�����ݿ����Ӳ���ȥ2000*/
-	print_line(__LINE__);
-	cout << " Preprocessing Database Ciphertext Data" << endl;
+	// print_line(__LINE__);
+	cout << "Processing ..." << endl;
+	// cout << " Preprocessing Database Ciphertext Data" << endl;
 	preprocessing_split_database_cipher(database_cipher_matrix, pre_database_cipher, parms, evaluator, encoder);
 	database_cipher_matrix.clear();//������ݿ�������ռ�ڴ�
-	cout << "       + Preprocessing Database Ciphertext Data Already" << endl;
+	// cout << "       + Preprocessing Database Ciphertext Data Already" << endl;
 	cout << "           + Noise budget after add_many: " << decryptor.invariant_noise_budget(pre_database_cipher[0]) << " bits" << endl;
 	seal::Ciphertext cipher1;
 
 	/*step.2���ͻ�������ȫ����ȥ1*/
-	print_line(__LINE__);
-	cout << " Preprocessing Client Ciphertext Data" << endl;
+	
+	cout << "Processing ......" << endl;
+	// print_line(__LINE__);
+
+	// cout << " Preprocessing Client Ciphertext Data" << endl;
 	for (int i = 0; i < client_cipher_matrix_all.size(); i++) {
 		preprocessing_split_client_cipher(client_cipher_matrix_all[i], parms, evaluator, encoder);
 	}
-	cout << "       + Preprocessing Client Ciphertext Data Already" << endl;
+	// cout << "       + Preprocessing Client Ciphertext Data Already" << endl;
 	//cout << "           + Noise budget after add_many: " << decryptor.invariant_noise_budget(client_cipher_matrix[0][0]) << " bits" << endl;
 
 	/*������ת����*/
 	print_line(__LINE__);
-	cout << " Rotate vector Data" << endl;
+	cout << " Rotate the encrypted vector, i.e., baby step ... " << endl;
 	rotate_vector_all(pre_database_cipher, rotate_vector, parms, evaluator, gal_keys);
-	cout << "       + Rotate vector Data Already" << endl;
+	// cout << "       + Rotate vector Data Already" << endl;
 
 	/*�ͻ��˾�����������*/
-	print_line(__LINE__);
-	cout << " Multiply matrix vector Data" << endl;
+	// print_line(__LINE__);
+	cout << " Multiplying encrypted matrix-vector " << endl;
 	for (int i = 0; i < client_cipher_matrix_all.size(); i++) {
 		matrix_multiply_split_vector(client_cipher_matrix_all[i], rotate_vector, mul_result, parms, evaluator, gal_keys, relin_keys);
 		mul_vector.push_back(mul_result);
 	}
-	cout << "       + Multiply matrix vector Data Already" << endl;
+	// cout << "       + Multiplying encrypted matrix-vector complete" << endl;
 	cout << "           + Noise budget after computing: " << decryptor.invariant_noise_budget(mul_result[0]) << " bits" << endl;
 
 	/*���������ĵ��������*/
-	print_line(__LINE__);
-	cout << " Add Each result Data" << endl;
+	// print_line(__LINE__);
+	cout << " Add all resulting ciphertext ... " << endl;
 	for (int i = 0; i < mul_vector.size(); i++) {
 		add_vector_result(mul_vector[i], result, evaluator, gal_keys);
 		result_vector.push_back(result);
 	}
-	cout << "       + Add Each result Data Already" << endl;
-	cout << "           + Noise budget after computing: " << decryptor.invariant_noise_budget(result) << " bits" << endl;
+	// cout << "       + Add Each result Data Already" << endl;
+	// cout << "           + Noise budget after computing: " << decryptor.invariant_noise_budget(result) << " bits" << endl;
 	
 
 	/*���������Ľ�����*/
-	print_line(__LINE__);
-	cout << " Add all result Data" << endl;
+	// print_line(__LINE__);
+	// cout << " Add all result Data" << endl;
 	add_allocate_result(result_vector, result, evaluator, gal_keys, encoder);
-	cout << "       + Add all result Data Already" << endl;
+	// cout << "       + Add all result Data Already" << endl;
 	cout << "           + Noise budget after computing: " << decryptor.invariant_noise_budget(result) << " bits" << endl;
 
-	/*����������ļ�*/
-	print_line(__LINE__);
-	cout << " Write result to file" << endl;
-	decrypte_vector_result(result, decryptor, encoder);
-	cout << "       + Write result to file Already" << endl;
+	auto ee_ee_time_end = chrono::high_resolution_clock::now();
+	time_diff = chrono::duration_cast<chrono::microseconds>(ee_ee_time_end - ee_ee_time_start);
+	cout << "EE computes the encrypted results: " << time_diff.count()/1e6 << " s" << endl;
 
+	cout << "----------------- Query Entity --------------------" << endl;
+
+	/*����������ļ�*/
+	// print_line(__LINE__);
+	auto qe_dd_time_start = chrono::high_resolution_clock::now();
+	cout << "Decrypt and write result to file ... " << endl;
+	decrypte_vector_result(result, decryptor, encoder);
+	cout << "Decrypt and write result to file ... ok" << endl;
+	auto qe_dd_time_end = chrono::high_resolution_clock::now();
+	time_diff = chrono::duration_cast<chrono::microseconds>(qe_dd_time_end - qe_dd_time_start);
+	cout << "EE computes the encrypted results: " << time_diff.count()/1e6 << " s" << endl;
+
+	
 	auto end_time = chrono::high_resolution_clock::now();
-	auto time_diff = chrono::duration_cast<chrono::microseconds>(end_time - start_time);
-	cout << "BGV time: " << time_diff.count()/1000 << " ms" << "     avg time: " << time_diff.count() / (400*1000) << " ms" << endl;
+	time_diff = chrono::duration_cast<chrono::microseconds>(end_time - start_time);
+	cout << "total time: " << time_diff.count()/1e6 << " s" << "     avg time: " << time_diff.count() / (400*1000) << " ms" << endl;
 
 }
