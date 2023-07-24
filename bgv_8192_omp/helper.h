@@ -85,28 +85,28 @@ inline void print_parameters(const seal::SEALContext& context)
     /*
    Print the true (product) coefficient modulus.
    */
-    std::cout << "|   coeff_modulus: ";
-    // std::cout << context_data.total_coeff_modulus_bit_count() << " (";
-    // auto coeff_modulus = context_data.parms().coeff_modulus();
+    // std::cout << "|   coeff_modulus: ";
+    // // std::cout << context_data.total_coeff_modulus_bit_count() << " (";
+    // // auto coeff_modulus = context_data.parms().coeff_modulus();
 
 
 
-    for (std::size_t i = 0; i < coeff_modulus_size - 1; i++)
-    {
-        if (context_data.total_coeff_modulus()[i] != 0) {
-            std::cout << context_data.total_coeff_modulus()[i] << " * ";
-        }
-        else {
-            std::cout << "1 * ";
-        }
-    }
-    if (context_data.total_coeff_modulus()[coeff_modulus_size - 1] != 0) {
-        std::cout << context_data.total_coeff_modulus()[coeff_modulus_size - 1];
-    }
-    else {
-        std::cout << "1 ";
-    }
-    std::cout << std::endl;
+    // for (std::size_t i = 0; i < coeff_modulus_size - 1; i++)
+    // {
+    //     if (context_data.total_coeff_modulus()[i] != 0) {
+    //         std::cout << context_data.total_coeff_modulus()[i] << " * ";
+    //     }
+    //     else {
+    //         std::cout << "1 * ";
+    //     }
+    // }
+    // if (context_data.total_coeff_modulus()[coeff_modulus_size - 1] != 0) {
+    //     std::cout << context_data.total_coeff_modulus()[coeff_modulus_size - 1];
+    // }
+    // else {
+    //     std::cout << "1 ";
+    // }
+    // std::cout << std::endl;
 
 
     /*

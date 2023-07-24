@@ -1,7 +1,9 @@
 #pragma once
 #define poly_modulus_degree_size 8192
 #define NUM_THREADS 8
-#define CoeffModulus_vector {34,34,34,34,34}
+#define CoeffModulus_vector {44,44,44,43,43}
+// #define CoeffModulus_vector {34,34,34,34,34}
+// #define CoeffModulus_vector {32,32,32,32,32}
 #define PlainModulus_size 25
 #define batch_size 64
 #define client_matirx_row_size 400

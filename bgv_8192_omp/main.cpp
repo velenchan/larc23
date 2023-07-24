@@ -20,7 +20,8 @@ int main() {
 	parms.set_poly_modulus_degree(poly_modulus_degree);
 	cout << " degree ... yes" << endl;
 
-	parms.set_coeff_modulus(CoeffModulus::Create(poly_modulus_degree, CoeffModulus_vector));
+	// parms.set_coeff_modulus(CoeffModulus::Create(poly_modulus_degree, CoeffModulus_vector));
+	parms.set_coeff_modulus(CoeffModulus::BFVDefault(poly_modulus_degree));
 	cout << " modulus ... yes" << endl;
 
 	parms.set_plain_modulus(PlainModulus::Batching(poly_modulus_degree, PlainModulus_size));
@@ -91,7 +92,7 @@ int main() {
 	// cout << " Read Client Original Data" << endl;
 	cout << " Reading query data ... " << endl;
 	read_data(client_matrix, client_filename, 16344, 400);
-	client_matrix = client_matrix.transpose();
+	// client_matrix = client_matrix.transpose();
 	// cout << "       + Read Client Original Data Already" << endl;
 	cout << " Reading query data ... yes" << endl;
 	allocating_task(client_matrix, allocat_matrix_task);
@@ -106,11 +107,15 @@ int main() {
 	// cout<<"size_tmp:  "<<size_tmp<<endl;
 	allocate_split_matrix.resize(allocat_matrix_task.size());
 
+	
+
 #pragma omp parallel for
 	for (int i = 0; i < size_tmp; i++) {
 		allocat_matrix_task[i].resize(batch_size, 16384);//���þ����С
 		allocate_split_matrix[i] =split_matrix(allocat_matrix_task[i], parms);//�и����	
 	}
+
+	
 
 	// cout << "       + Split Client Matrix Already" << endl;
 
@@ -119,12 +124,17 @@ int main() {
 	// cout << " Encode Client Original Data" << endl;
 	size_tmp = allocate_split_matrix.size();
 	allocate_split_encode_matrix.resize(size_tmp);
+	
 #pragma omp parallel for
 	for (int i = 0; i < size_tmp; i++) {
 		allocate_split_encode_matrix[i]=encode_split_client_matrix(allocate_split_matrix[i], batch_size, poly_modulus_degree_size);//�����и����
 	}
 	// cout << "       + Encode Client Original Data Already" << endl;
+	// auto qe_ee_time_end = chrono::high_resolution_clock::now();
+	// time_diff = chrono::duration_cast<chrono::microseconds>(qe_ee_time_end - qe_ee_time_start);
 	
+	// cout << " Encoding and encrypting query data ... yes" << endl;
+	// cout << "QE: encoding and encrypting query data costs " << time_diff.count()/1e6 << " s" << endl;
 	
 
 	// /*��������*/
@@ -133,9 +143,10 @@ int main() {
 	// auto qe_ee_time_start = chrono::high_resolution_clock::now();
 	size_tmp = allocate_split_encode_matrix.size();
 	client_cipher_matrix_all.resize(size_tmp);
-	#pragma omp parallel for
+	// auto qe_ee_time_start = chrono::high_resolution_clock::now();
+#pragma omp parallel for
 	for (int i = 0; i < size_tmp; i++) {
-		client_cipher_matrix_all[i]= encrypte_split_matrix(allocate_split_encode_matrix[i], encryptor, encoder);
+		client_cipher_matrix_all[i]= encrypt_split_matrix(allocate_split_encode_matrix[i], encryptor, encoder);
 	}
 	// cout << "       + Encrypt Client Original Data Already" << endl;
 	auto qe_ee_time_end = chrono::high_resolution_clock::now();
@@ -145,30 +156,47 @@ int main() {
 	cout << "QE: encoding and encrypting query data costs " << time_diff.count()/1e6 << " s" << endl;
 
 
-	auto de_ee_time_start = chrono::high_resolution_clock::now();
+	auto de_rd_time_start = chrono::high_resolution_clock::now();
 	cout << endl << "----------------- Database Owner--------------------" << endl;
 	/*�����ݿ������*/
 	// print_line(__LINE__);
 	// cout << " Read Database Original Data" << endl;
-	cout << " Reading database  data ... " << endl;
+	cout << " Reading database data ... " << endl;
+
 	read_data(database_matrix, database_filename, 16344, 2000);
-	database_matrix = database_matrix.transpose();
+
+	// auto de_rd_time_start = chrono::high_resolution_clock::now();
+	// database_matrix = database_matrix.transpose();
+
+	
 	// cout << "       + Read Database Original Data Already" << endl;
-	cout << " Reading database  data ... yes" << endl;
+	cout << " Reading database data ... yes" << endl;
+	auto de_rd_time_end = chrono::high_resolution_clock::now();
+	time_diff = chrono::duration_cast<chrono::microseconds>(de_rd_time_end - de_rd_time_start);
+	cout << "DE: reading database costs: " << time_diff.count()/1e6 << " s" << endl << endl;
 	/*�и����*/
 	// print_line(__LINE__);
 	// cout << " Split Database Matrix" << endl;
+	
+	auto de_ee_time_start = chrono::high_resolution_clock::now();
 	cout << " Encoding and encrypting database data ... " << endl;
 	database_matrix.resize(2000, 16384);//���þ����С
-	database_split_matrix=split_matrix(database_matrix, parms);//�и����
+
+	
+	
+
+	database_split_matrix = split_matrix(database_matrix, parms);//�и����
 	// cout << "       + Split Database Matrix Already" << endl;
+
+	
 
 	/*��������*/
 	// print_line(__LINE__);
 	// auto de_ee_time_start = chrono::high_resolution_clock::now();
 	// cout << " Encrypt Database Original Data" << endl;
-	database_cipher_matrix=encrypte_split_matrix_parallel(database_split_matrix, encryptor, encoder);
+	database_cipher_matrix=encrypt_split_matrix_parallel(database_split_matrix, encryptor, encoder);
 	// cout << "       + Encrypt Database Original Data Already" << endl;
+	// auto de_ee_time_end = chrono::high_resolution_clock::now();
 	auto de_ee_time_end = chrono::high_resolution_clock::now();
 	time_diff = chrono::duration_cast<chrono::microseconds>(de_ee_time_end - de_ee_time_start);
 	cout << " Encoding and encrypting database data ... yes" << endl;
@@ -176,12 +204,12 @@ int main() {
 
 
 	auto ee_ee_time_start = chrono::high_resolution_clock::now();
-	cout << endl << "----------------- Evaluator --------------------" << endl;
+	cout << endl << "----------------- Computing Entity --------------------" << endl;
 	/*����Ԥ����*/
 	/*step1.�����ݿ����Ӳ���ȥ2000*/
 	// print_line(__LINE__);
 	// cout << " Preprocessing Database Ciphertext Data" << endl;
-	cout << " Evaluating ...";
+	cout << " Computing over ciphertexts ...";
 	preprocessing_split_database_cipher(database_cipher_matrix, pre_database_cipher, parms, evaluator, encoder);
 	database_cipher_matrix.clear();//������ݿ�������ռ�ڴ�
 	// cout << "       + Preprocessing Database Ciphertext Data Already" << endl;
@@ -193,7 +221,7 @@ int main() {
 	// cout << " Preprocessing Client Ciphertext Data" << endl;
 	size_tmp = client_cipher_matrix_all.size();
 	// cout << " ... ";
-	#pragma omp parallel for
+#pragma omp parallel for
 	for (int i = 0; i < client_cipher_matrix_all.size(); i++) {
 		preprocessing_split_client_cipher(client_cipher_matrix_all[i], parms, evaluator, encoder);
 	}
@@ -225,7 +253,7 @@ int main() {
 	// cout << " Add Each result Data" << endl;
 	size_tmp=mul_vector.size();
 	result_vector.resize(size_tmp);
-	#pragma omp parallel for
+#pragma omp parallel for
 	for (int i = 0; i < mul_vector.size(); i++) {
 		result_vector[i]= add_vector_result(mul_vector[i], evaluator, gal_keys);
 	}
@@ -238,14 +266,15 @@ int main() {
 	// cout << " Add all result Data" << endl;
 	add_allocate_result(result_vector, result, evaluator, gal_keys, encoder);
 	// cout << "       + Add all result Data Already" << endl;
-	// cout << "           + Noise budget after computing: " << decryptor.invariant_noise_budget(result) << " bits" << endl;
+	
 
-	cout << " Evaluating ... yes" << endl;
+	cout << " Computing over ciphertexts ... yes" << endl;
+	cout << "           + Noise budget after computing: " << decryptor.invariant_noise_budget(result) << " bits" << endl;
 
 
 	auto ee_ee_time_end = chrono::high_resolution_clock::now();
 	time_diff = chrono::duration_cast<chrono::microseconds>(ee_ee_time_end - ee_ee_time_start);
-	cout << "EE: computing the encrypted results costs " << time_diff.count()/1e6 << " s" << endl;
+	cout << "CE: computing the encrypted results costs " << time_diff.count()/1e6 << " s" << endl;
 
 
 	/*����������ļ�*/
@@ -255,7 +284,7 @@ int main() {
 	auto qe_dd_time_start = chrono::high_resolution_clock::now();
 	cout << endl << "----------------- Query Entity --------------------" << endl;
 	cout << "Decrypt and write result to file ... " << endl;
-	decrypte_vector_result(result, decryptor, encoder);
+	decrypt_vector_result(result, decryptor, encoder);
 	cout << "Decrypt and write result to file ... yes" << endl;
 	auto qe_dd_time_end = chrono::high_resolution_clock::now();
 	time_diff = chrono::duration_cast<chrono::microseconds>(qe_dd_time_end - qe_dd_time_start);

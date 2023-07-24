@@ -15,10 +15,13 @@ void read_data(matrix<int64_t>& Ma, string& filename, int m, int n)
         return;
     }
 
-    string line;
-    Ma.resize(m, n); //ע����Ҫresize����txt�ļ��о����ά�ȶ�Ӧ
+    // string line;
+    Ma.resize(n, m); //ע����Ҫresize����txt�ļ��о����ά�ȶ�Ӧ
+//     omp_set_num_threads(NUM_THREADS);
+// #pragma omp parallel for ordered
     for (int i = 0; i < m; i++)
     {
+        string line;
         getline(in, line);
         int nSPos = 0, nEPos = 0;
         nSPos = line.find('\t', nSPos); //��1��tab��
@@ -38,11 +41,11 @@ void read_data(matrix<int64_t>& Ma, string& filename, int m, int n)
             {
                 break;
             }
-            Ma(i, j) = static_cast<int64_t>(stod(line.substr(nSPos, nEPos - nSPos)));
+            Ma(j, i) = static_cast<int64_t>(stod(line.substr(nSPos, nEPos - nSPos)));
             j++;
             nSPos = nEPos;
         }
-        Ma(i, j) = static_cast<int64_t>(stod(line.substr(nSPos, line.length() - nSPos)));
+        Ma(j, i) = static_cast<int64_t>(stod(line.substr(nSPos, line.length() - nSPos)));
     }
     in.close();
 }
@@ -52,7 +55,7 @@ void read_data(matrix<int64_t>& Ma, string& filename, int m, int n)
 * ���룺����A
 * ��������ľ���B
 */
-void encrypte_matrix(matrix<int64_t>& A, vector<Ciphertext>& B, seal::Encryptor& encryptor, seal::BatchEncoder& encoder)
+void encrypt_matrix(matrix<int64_t>& A, vector<Ciphertext>& B, seal::Encryptor& encryptor, seal::BatchEncoder& encoder)
 {
     int row_size = A.get_rows();
     seal::Plaintext plain_tmp;
@@ -66,20 +69,20 @@ void encrypte_matrix(matrix<int64_t>& A, vector<Ciphertext>& B, seal::Encryptor&
     }
 }
 
-vector<vector<Ciphertext>> encrypte_split_matrix(vector<matrix<int64_t>>& A, seal::Encryptor& encryptor, seal::BatchEncoder& encoder)
+vector<vector<Ciphertext>> encrypt_split_matrix(vector<matrix<int64_t>>& A, seal::Encryptor& encryptor, seal::BatchEncoder& encoder)
 {
     vector<vector<Ciphertext>> destination;
     vector<Ciphertext> tmp_cipher;
     destination.resize(A.size());
     for (int i = 0; i < A.size(); i++) {
-        encrypte_matrix(A[i], tmp_cipher, encryptor, encoder);
+        encrypt_matrix(A[i], tmp_cipher, encryptor, encoder);
         destination[i]=tmp_cipher;
         tmp_cipher.clear();
     }
     return destination;
 }
 
-vector<Ciphertext> encrypte_matrix_parallel(matrix<int64_t>& A, seal::Encryptor& encryptor, seal::BatchEncoder& encoder)
+vector<Ciphertext> encrypt_matrix_parallel(matrix<int64_t>& A, seal::Encryptor& encryptor, seal::BatchEncoder& encoder)
 {
     vector<Ciphertext> B;
     int row_size = A.get_rows();
@@ -98,7 +101,7 @@ vector<Ciphertext> encrypte_matrix_parallel(matrix<int64_t>& A, seal::Encryptor&
     return B;
 }
 
-vector<vector<Ciphertext>> encrypte_split_matrix_parallel(vector<matrix<int64_t>>& A, seal::Encryptor& encryptor, seal::BatchEncoder& encoder)
+vector<vector<Ciphertext>> encrypt_split_matrix_parallel(vector<matrix<int64_t>>& A, seal::Encryptor& encryptor, seal::BatchEncoder& encoder)
 {
     vector<vector<Ciphertext>> destination;
     vector<Ciphertext> tmp_cipher;
@@ -107,7 +110,7 @@ vector<vector<Ciphertext>> encrypte_split_matrix_parallel(vector<matrix<int64_t>
     //omp_set_num_threads(NUM_THREADS);
 //#pragma omp parallel for
     for (int i = 0; i < A.size(); i++) {
-        destination[i]= encrypte_matrix_parallel(A[i], encryptor, encoder);
+        destination[i]= encrypt_matrix_parallel(A[i], encryptor, encoder);
     }
     return destination;
 }
@@ -148,7 +151,7 @@ vector<matrix<int64_t>> split_matrix(matrix<int64_t>& A, seal::EncryptionParamet
 /*
 * ���ܽ��
 */
-void decrypte_vector_result(seal::Ciphertext& result, seal::Decryptor& decryptor, seal::BatchEncoder& encoder)
+void decrypt_vector_result(seal::Ciphertext& result, seal::Decryptor& decryptor, seal::BatchEncoder& encoder)
 {
     seal::Plaintext result_dec;
     vector<uint64_t> result_vec;

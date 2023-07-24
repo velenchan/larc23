@@ -81,6 +81,7 @@ public:
     //the transpose of the matrix
     matrix<T> transpose() const {
         matrix<T> B(d, n);
+#pragma omp parallel for
         for (std::size_t i = 0; i < n; i++)
             for (std::size_t j = 0; j < d; j++)
                 B(j, i) = M[j][i];

@@ -21,16 +21,16 @@ using namespace seal;
 void read_data(matrix<int64_t>& Ma, string& filename, int m, int n);
 
 //���ܾ���
-void encrypte_matrix(matrix<int64_t>& A, vector<Ciphertext>& B, seal::Encryptor& encryptor, seal::BatchEncoder& encoder);
-vector<vector<Ciphertext>> encrypte_split_matrix(vector<matrix<int64_t>>& A, seal::Encryptor& encryptor, seal::BatchEncoder& encoder);
-vector<Ciphertext> encrypte_matrix_parallel(matrix<int64_t>& A,  seal::Encryptor& encryptor, seal::BatchEncoder& encoder);
-vector<vector<Ciphertext>> encrypte_split_matrix_parallel(vector<matrix<int64_t>>& A, seal::Encryptor& encryptor, seal::BatchEncoder& encoder);
+void encrypt_matrix(matrix<int64_t>& A, vector<Ciphertext>& B, seal::Encryptor& encryptor, seal::BatchEncoder& encoder);
+vector<vector<Ciphertext>> encrypt_split_matrix(vector<matrix<int64_t>>& A, seal::Encryptor& encryptor, seal::BatchEncoder& encoder);
+vector<Ciphertext> encrypt_matrix_parallel(matrix<int64_t>& A,  seal::Encryptor& encryptor, seal::BatchEncoder& encoder);
+vector<vector<Ciphertext>> encrypt_split_matrix_parallel(vector<matrix<int64_t>>& A, seal::Encryptor& encryptor, seal::BatchEncoder& encoder);
 
 //�и����
 vector<matrix<int64_t>> split_matrix(matrix<int64_t>& A, seal::EncryptionParameters& parms);
 
 //��������
-void decrypte_vector_result(seal::Ciphertext& result, seal::Decryptor& decryptor, seal::BatchEncoder& encoder);
+void decrypt_vector_result(seal::Ciphertext& result, seal::Decryptor& decryptor, seal::BatchEncoder& encoder);
 
 
 /*

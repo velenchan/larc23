@@ -103,6 +103,7 @@ int main() {
 	// print_line(__LINE__);
 	// cout << " Split Client Matrix" << endl;
 	allocate_split_matrix.resize(allocat_matrix_task.size());
+	
 	for (int i = 0; i < allocat_matrix_task.size(); i++) {
 		allocat_matrix_task[i].resize(batch_size, 16384);//���þ����С
 		split_matrix(allocat_matrix_task[i], split_matrix_result, parms);//�и����
@@ -112,10 +113,12 @@ int main() {
 		//cout << split_matrix_result[1].get_rows() << "   " << split_matrix_result[1].get_cols() << endl;
 	}
 	// cout << "       + Split Client Matrix Already" << endl;
+	
 
 	/*�������*/
 	// print_line(__LINE__);
 	cout << " Encode query data ... " << endl;
+	
 	for (int i = 0; i < allocate_split_matrix.size(); i++) {
 		//cout << allocate_split_matrix[i].size() << endl;
 		encode_split_client_matrix(allocate_split_matrix[i], encode_split_matrix, batch_size, poly_modulus_degree_size);//�����и����
@@ -127,11 +130,15 @@ int main() {
 	// cout << "       + Encode Client Original Data Already" << endl;
 	allocat_matrix_task.clear();
 	encode_split_matrix.clear();
+	// auto qe_ee_time_end = chrono::high_resolution_clock::now();
+	// time_diff = chrono::duration_cast<chrono::microseconds>(qe_ee_time_end - qe_ee_time_start);
+	// cout << "QE encodes and encrypts the query data: " << time_diff.count()/1e6 << " s" << endl;
 
 	/*��������*/
 	// print_line(__LINE__);
 	
 	cout << " Encrypt query data ... " << endl;
+	// auto qe_ee_time_start = chrono::high_resolution_clock::now();
 	for (int i = 0; i < allocate_split_encode_matrix.size(); i++) {
 		//cout << allocate_split_encode_matrix[i].size() << endl;
 		encrypte_split_matrix(allocate_split_encode_matrix[i], client_cipher_matrix, encryptor, encoder);
@@ -147,7 +154,7 @@ int main() {
 	cout << "QE encodes and encrypts the query data: " << time_diff.count()/1e6 << " s" << endl;
 
 
-	// auto de_ee_time_start = chrono::high_resolution_clock::now();
+	auto de_rd_time_start = chrono::high_resolution_clock::now();
 
 	cout << "----------------- Database Entity --------------------" << endl;
 	/*�����ݿ������*/
@@ -156,6 +163,10 @@ int main() {
 	read_data(database_matrix, database_filename, 16344, 2000);
 	database_matrix = database_matrix.transpose();
 	// cout << "       + Read Database Original Data Already" << endl;
+	cout << " Reading database data ... yes" << endl;
+	auto de_rd_time_end = chrono::high_resolution_clock::now();
+	time_diff = chrono::duration_cast<chrono::microseconds>(de_rd_time_end - de_rd_time_start);
+	cout << "DE: reading database costs: " << time_diff.count()/1e6 << " s" << endl << endl;
 
 	/*�и����*/
 	// print_line(__LINE__);
