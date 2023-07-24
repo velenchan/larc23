@@ -14,7 +14,7 @@ int main() {
 	omp_set_num_threads(8);
 	//����bgv���ܲ���
 	EncryptionParameters parms(scheme_type::bgv);
-	cout << endl << "bgv initialization ... " << endl;
+	cout  << "bgv initialization ... " << endl;
 
 	size_t poly_modulus_degree = poly_modulus_degree_size;
 	parms.set_poly_modulus_degree(poly_modulus_degree);
@@ -57,7 +57,7 @@ int main() {
 	cout << "QE: bgv initialization costs " << time_diff.count()/1e6 << " s" << endl;
 
 	auto qe_ee_time_start = chrono::high_resolution_clock::now();
-	cout << "----------------- Query Entity --------------------" << endl;
+	cout << endl << "----------------- Query Entity --------------------" << endl;
 
 	/*�����б�*/
 	int size_tmp;
@@ -146,7 +146,7 @@ int main() {
 
 
 	auto de_ee_time_start = chrono::high_resolution_clock::now();
-	cout << "----------------- Database Owner--------------------" << endl;
+	cout << endl << "----------------- Database Owner--------------------" << endl;
 	/*�����ݿ������*/
 	// print_line(__LINE__);
 	// cout << " Read Database Original Data" << endl;
@@ -176,7 +176,7 @@ int main() {
 
 
 	auto ee_ee_time_start = chrono::high_resolution_clock::now();
-	cout << "----------------- Evaluator --------------------" << endl;
+	cout << endl << "----------------- Evaluator --------------------" << endl;
 	/*����Ԥ����*/
 	/*step1.�����ݿ����Ӳ���ȥ2000*/
 	// print_line(__LINE__);
@@ -253,7 +253,7 @@ int main() {
 	// cout << " Write result to file" << endl;
 	
 	auto qe_dd_time_start = chrono::high_resolution_clock::now();
-	cout << "----------------- Query Entity --------------------" << endl;
+	cout << endl << "----------------- Query Entity --------------------" << endl;
 	cout << "Decrypt and write result to file ... " << endl;
 	decrypte_vector_result(result, decryptor, encoder);
 	cout << "Decrypt and write result to file ... ok" << endl;
@@ -263,6 +263,7 @@ int main() {
 
 	auto end_time = chrono::high_resolution_clock::now();
 	time_diff = chrono::duration_cast<chrono::microseconds>(end_time - start_time);
+	cout << endl << "----------------- Total Cost --------------------" << endl;
 	cout << "Totally, it costs " << time_diff.count()/1e6 << " s" << endl;
 	cout << "The total RAM used: " << (double)(memory_usage() / 1e6 + 1) << " MB" << endl;
 
