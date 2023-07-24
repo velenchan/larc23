@@ -53,7 +53,7 @@ int main() {
 	
 	auto ini_time_end = chrono::high_resolution_clock::now();
 	auto time_diff = chrono::duration_cast<chrono::microseconds>(ini_time_end - ini_time_start);
-	cout << "bgv initialization ... ok" << endl;
+	cout << "bgv initialization ... yes" << endl;
 	cout << "QE: bgv initialization costs " << time_diff.count()/1e6 << " s" << endl;
 
 	auto qe_ee_time_start = chrono::high_resolution_clock::now();
@@ -93,7 +93,7 @@ int main() {
 	read_data(client_matrix, client_filename, 16344, 400);
 	client_matrix = client_matrix.transpose();
 	// cout << "       + Read Client Original Data Already" << endl;
-	cout << " Reading query data ... ok" << endl;
+	cout << " Reading query data ... yes" << endl;
 	allocating_task(client_matrix, allocat_matrix_task);
 	//cout << allocat_matrix_task.size() << endl;
 
@@ -141,7 +141,7 @@ int main() {
 	auto qe_ee_time_end = chrono::high_resolution_clock::now();
 	time_diff = chrono::duration_cast<chrono::microseconds>(qe_ee_time_end - qe_ee_time_start);
 	
-	cout << " Encoding and encrypting query data ... ok" << endl;
+	cout << " Encoding and encrypting query data ... yes" << endl;
 	cout << "QE: encoding and encrypting query data costs " << time_diff.count()/1e6 << " s" << endl;
 
 
@@ -154,7 +154,7 @@ int main() {
 	read_data(database_matrix, database_filename, 16344, 2000);
 	database_matrix = database_matrix.transpose();
 	// cout << "       + Read Database Original Data Already" << endl;
-	cout << " Reading database  data ... ok" << endl;
+	cout << " Reading database  data ... yes" << endl;
 	/*�и����*/
 	// print_line(__LINE__);
 	// cout << " Split Database Matrix" << endl;
@@ -171,7 +171,7 @@ int main() {
 	// cout << "       + Encrypt Database Original Data Already" << endl;
 	auto de_ee_time_end = chrono::high_resolution_clock::now();
 	time_diff = chrono::duration_cast<chrono::microseconds>(de_ee_time_end - de_ee_time_start);
-	cout << " Encoding and encrypting database data ... ok" << endl;
+	cout << " Encoding and encrypting database data ... yes" << endl;
 	cout << "DE: encoding and encrypting the database data costs: " << time_diff.count()/1e6 << " s" << endl;
 
 
@@ -240,7 +240,7 @@ int main() {
 	// cout << "       + Add all result Data Already" << endl;
 	// cout << "           + Noise budget after computing: " << decryptor.invariant_noise_budget(result) << " bits" << endl;
 
-	cout << " Evaluating ... ok" << endl;
+	cout << " Evaluating ... yes" << endl;
 
 
 	auto ee_ee_time_end = chrono::high_resolution_clock::now();
@@ -256,7 +256,7 @@ int main() {
 	cout << endl << "----------------- Query Entity --------------------" << endl;
 	cout << "Decrypt and write result to file ... " << endl;
 	decrypte_vector_result(result, decryptor, encoder);
-	cout << "Decrypt and write result to file ... ok" << endl;
+	cout << "Decrypt and write result to file ... yes" << endl;
 	auto qe_dd_time_end = chrono::high_resolution_clock::now();
 	time_diff = chrono::duration_cast<chrono::microseconds>(qe_dd_time_end - qe_dd_time_start);
 	cout << "QE: decrypting and decoding the result costs " << time_diff.count()/1e6 << " s" << endl;
