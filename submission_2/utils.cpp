@@ -296,7 +296,7 @@ void split_vector(matrix<int64_t> &A,vector<vector<int64_t>> &B,seal::Encryption
     int row_size = A.get_rows();
     int split_length = parms.poly_modulus_degree();
     if(row_size !=1){
-        cout<<" split vector row_size of input matrix must be one"<<endl;
+        cout<<" split_vector: row_size of input matrix must be one"<<endl;
     }
     else{
         int len=ceil( double(col_size) /double(split_length));
@@ -558,8 +558,8 @@ void preprocessing_split_database_cipher(vector<vector<seal::Ciphertext>>& A,vec
     Ciphertext tmp;
     B.resize(A.size());
     omp_set_num_threads(NUM_THREADS);
-    cout<<"A_size: "<<A.size()<<endl;
-#pragma omp parallel for
+    // cout<<"A_size: "<<A.size()<<endl;
+// #pragma omp parallel for
     for (int i = 0; i < A.size(); i++) {
         B[i]=preprocessing_database_cipher(A[i],u[i], parms, evaluator, encoder);
     }

@@ -179,7 +179,7 @@ int main() {
 	read_database_data(database_matrix, database_filename, 16344, 2000);
 	// database_matrix.linear_scale(10);
 	read_model(model_matrix,model_filename,16344,1);
-	model_matrix.print(1,6);
+	// model_matrix.print(1,6);
 
 	// auto de_rd_time_start = chrono::high_resolution_clock::now();
 	// database_matrix = database_matrix.transpose();
@@ -204,8 +204,8 @@ int main() {
 
 	database_split_matrix = split_matrix(database_matrix, parms);//�и����
 	split_vector(model_matrix,model_split_vector,parms);
-	cout<<"split vector size"<<model_split_vector.size()<<endl;
-	print_vector(model_split_vector[0]);
+	// cout<<"split vector size"<<model_split_vector.size()<<endl;
+	// print_vector(model_split_vector[0]);
 	// cout << "       + Split Database Matrix Already" << endl;
 
 	
@@ -254,7 +254,7 @@ int main() {
 // 	}
 
 
-	cout << "client_cipher_matrix_all.size: " << client_cipher_matrix_all.size() << endl;
+	// cout << "client_cipher_matrix_all.size: " << client_cipher_matrix_all.size() << endl;
 
 
 

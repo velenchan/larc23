@@ -243,7 +243,7 @@ int main() {
 // 	}
 
 
-	cout << "client_cipher_matrix_all.size: " << client_cipher_matrix_all.size() << endl;
+	// cout << "client_cipher_matrix_all.size: " << client_cipher_matrix_all.size() << endl;
 
 
 
