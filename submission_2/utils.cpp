@@ -59,6 +59,7 @@ void read_database_data(matrix<int64_t>& Ma, string& filename, int m, int n)
        for (int j = 0; j < n; j++)
        {
            iss >> Ma(j, i);
+           //linear scaling with scaling factor 10
            Ma.set(j, i, Ma(j, i)*10);
        }
    }
