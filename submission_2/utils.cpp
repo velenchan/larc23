@@ -2,11 +2,8 @@
 #include <sys/resource.h>
 using namespace std;
 
-/*
-* ��ԭʼ����
-* ���룺����Ma���ļ�·��filename����������m����������n
-*/
-void read_data(matrix<int64_t>& Ma, string& filename, int m, int n)
+
+void read_database_data(matrix<int64_t>& Ma, string& filename, int m, int n)
 {
     fstream in(filename);
     if (!in.is_open())
@@ -19,6 +16,7 @@ void read_data(matrix<int64_t>& Ma, string& filename, int m, int n)
     Ma.resize(n, m); //ע����Ҫresize����txt�ļ��о����ά�ȶ�Ӧ
 //     omp_set_num_threads(NUM_THREADS);
 // #pragma omp parallel for ordered
+    /*
     for (int i = 0; i < m; i++)
     {
         string line;
@@ -46,22 +44,150 @@ void read_data(matrix<int64_t>& Ma, string& filename, int m, int n)
             nSPos = nEPos;
         }
         Ma(j, i) = static_cast<int64_t>(stod(line.substr(nSPos, line.length() - nSPos)));
+    }*/
+    
+    string line;
+   for (int i = 0; i < m; i++)
+   {
+       //cout << "Reading " << i+1 << "th line." << endl;
+       getline(in, line);
+       std::istringstream iss(line);
+       // 跳过前4个元素
+       for (int i = 0; i < 4; ++i) {
+           iss.ignore(numeric_limits<streamsize>::max(), '\t');
+       }
+       for (int j = 0; j < n; j++)
+       {
+           iss >> Ma(j, i);
+           Ma.set(j, i, Ma(j, i)*10);
+       }
+   }
+    in.close();
+}
+
+
+
+/*
+* ��ԭʼ����
+* ���룺����Ma���ļ�·��filename����������m����������n
+*/
+void read_data(matrix<int64_t>& Ma, string& filename, int m, int n)
+{
+    fstream in(filename);
+    if (!in.is_open())
+    {
+        cout << "open .txt fail!" << endl;
+        return;
     }
-    //    string line;
-//    for (int i = 0; i < m; i++)
-//    {
-//        //cout << "Reading " << i+1 << "th line." << endl;
-//        getline(in, line);
-//        std::istringstream iss(line);
-//        // 跳过前4个元素
-//        for (int i = 0; i < 4; ++i) {
-//            iss.ignore(numeric_limits<streamsize>::max(), '\t');
-//        }
-//        for (int j = 0; j < n; j++)
-//        {
-//            iss >> Ma(j, i);
-//        }
-//    }
+
+    // string line;
+    Ma.resize(n, m); //ע����Ҫresize����txt�ļ��о����ά�ȶ�Ӧ
+//     omp_set_num_threads(NUM_THREADS);
+// #pragma omp parallel for ordered
+    /*
+    for (int i = 0; i < m; i++)
+    {
+        string line;
+        getline(in, line);
+        int nSPos = 0, nEPos = 0;
+        nSPos = line.find('\t', nSPos); //��1��tab��
+        nSPos++;
+        nSPos = line.find('\t', nSPos); //��2��tab��
+        nSPos++;
+        nSPos = line.find('\t', nSPos); //��3��tab��
+        nSPos++;
+        nSPos = line.find('\t', nSPos); //��4��tab��
+        // nSPos++;//�������ʼ��λ��
+        int j = 0;
+        while (1)
+        {
+            nSPos++;
+            nEPos = line.find('\t', nSPos);
+            if (nEPos == -1)
+            {
+                break;
+            }
+            Ma(j, i) = static_cast<int64_t>(stod(line.substr(nSPos, nEPos - nSPos)));
+            j++;
+            nSPos = nEPos;
+        }
+        Ma(j, i) = static_cast<int64_t>(stod(line.substr(nSPos, line.length() - nSPos)));
+    }*/
+    
+    string line;
+   for (int i = 0; i < m; i++)
+   {
+       //cout << "Reading " << i+1 << "th line." << endl;
+       getline(in, line);
+       std::istringstream iss(line);
+       // 跳过前4个元素
+       for (int i = 0; i < 4; ++i) {
+           iss.ignore(numeric_limits<streamsize>::max(), '\t');
+       }
+       for (int j = 0; j < n; j++)
+       {
+           iss >> Ma(j, i);
+       }
+   }
+    in.close();
+}
+
+void read_model(matrix<int64_t>& Ma, string& filename, int m, int n)
+{
+    fstream in(filename);
+    if (!in.is_open())
+    {
+        cout << "open .txt fail!" << endl;
+        return;
+    }
+
+    // string line;
+    Ma.resize(n, m); //ע����Ҫresize����txt�ļ��о����ά�ȶ�Ӧ
+//     omp_set_num_threads(NUM_THREADS);
+// #pragma omp parallel for ordered
+    /*
+    for (int i = 0; i < m; i++)
+    {
+        string line;
+        getline(in, line);
+        int nSPos = 0, nEPos = 0;
+        nSPos = line.find('\t', nSPos); //��1��tab��
+        nSPos++;
+        nSPos = line.find('\t', nSPos); //��2��tab��
+        nSPos++;
+        nSPos = line.find('\t', nSPos); //��3��tab��
+        nSPos++;
+        nSPos = line.find('\t', nSPos); //��4��tab��
+        // nSPos++;//�������ʼ��λ��
+        int j = 0;
+        while (1)
+        {
+            nSPos++;
+            nEPos = line.find('\t', nSPos);
+            if (nEPos == -1)
+            {
+                break;
+            }
+            Ma(j, i) = static_cast<int64_t>(stod(line.substr(nSPos, nEPos - nSPos)));
+            j++;
+            nSPos = nEPos;
+        }
+        Ma(j, i) = static_cast<int64_t>(stod(line.substr(nSPos, line.length() - nSPos)));
+    }*/
+    
+    string line;
+   for (int i = 0; i < m; i++)
+   {
+       //cout << "Reading " << i+1 << "th line." << endl;
+       getline(in, line);
+       std::istringstream iss(line);
+       // 跳过前4个元素
+       
+       for (int j = 0; j < n; j++)
+       {
+           iss >> Ma(j, i);
+       }
+   }
     in.close();
 }
 
@@ -163,13 +289,43 @@ vector<matrix<int64_t>> split_matrix(matrix<int64_t>& A, seal::EncryptionParamet
     return split_A;
 }
 
+
+void split_vector(matrix<int64_t> &A,vector<vector<int64_t>> &B,seal::EncryptionParameters &parms)
+{
+    int col_size = A.get_cols();
+    int row_size = A.get_rows();
+    int split_length = parms.poly_modulus_degree();
+    if(row_size !=1){
+        cout<<" split vector row_size of input matrix must be one"<<endl;
+    }
+    else{
+        int len=ceil( double(col_size) /double(split_length));
+        B.resize(len);
+        for(int i=0;i<len;i++){
+            B[i]=A.get_row(0,i*split_length,(i+1)*split_length);
+        }
+    }
+}
+
+void encrypt_vector(vector<vector<int64_t>> &A,vector<seal::Ciphertext> &destination, seal::Encryptor& encryptor, seal::BatchEncoder& encoder)
+{
+    seal::Plaintext plain_tmp;
+    seal:: Ciphertext cipher_tmp;
+    for(int i=0;i<A.size();i++){
+        encoder.encode(A[i],plain_tmp);
+        encryptor.encrypt(plain_tmp,cipher_tmp);
+        destination.push_back(cipher_tmp);
+    }
+}
+
+
 /*
 * ���ܽ��
 */
 void decrypt_vector_result(seal::Ciphertext& result, seal::Decryptor& decryptor, seal::BatchEncoder& encoder)
 {
     seal::Plaintext result_dec;
-    vector<uint64_t> result_vec;
+    vector<int64_t> result_vec;
     decryptor.decrypt(result, result_dec);
     encoder.decode(result_dec, result_vec);
     result_vec.resize(client_matirx_row_size);
@@ -351,8 +507,8 @@ void preprocessing_split_client_cipher(vector<vector<seal::Ciphertext>>& A, seal
 
     vector<int64_t> vector_tmp(parms.poly_modulus_degree(), -1);
     encoder.encode(vector_tmp, plain_tmp);
-    omp_set_num_threads(NUM_THREADS);
-#pragma omp parallel for
+//     omp_set_num_threads(NUM_THREADS);
+// #pragma omp parallel for
     for (int i = 0; i < A.size(); i++) {
         for (int j = 0; j < A[i].size(); j++) {
             evaluator.add_plain_inplace(A[i][j], plain_tmp);
@@ -384,26 +540,28 @@ void allocating_task(matrix<int64_t>& A, vector<matrix<int64_t>>& B)
     } 
 }
 
-Ciphertext preprocessing_database_cipher(vector<seal::Ciphertext>& A, seal::EncryptionParameters& parms, seal::Evaluator& evaluator, seal::BatchEncoder& encoder)
+Ciphertext preprocessing_database_cipher(vector<seal::Ciphertext>& A,seal::Ciphertext& u, seal::EncryptionParameters& parms, seal::Evaluator& evaluator, seal::BatchEncoder& encoder)
 {
     Ciphertext B;
     seal::Ciphertext cipher_tmp;
-    seal::Plaintext plain_tmp;
-    vector<int64_t> vector_tmp(parms.poly_modulus_degree(), -2000);
-    encoder.encode(vector_tmp, plain_tmp);
+    //seal::Plaintext plain_tmp;
+    //vector<int64_t> vector_tmp(parms.poly_modulus_degree(), -2000);
+    //encoder.encode(vector_tmp, plain_tmp);
     evaluator.add_many(A, cipher_tmp);
-    evaluator.add_plain(cipher_tmp, plain_tmp, B);
+    evaluator.add(cipher_tmp,u,B);
+    //evaluator.add_plain(cipher_tmp, plain_tmp, B);
     return B;
 }
 
-void preprocessing_split_database_cipher(vector<vector<seal::Ciphertext>>& A, vector<Ciphertext>& B, seal::EncryptionParameters& parms, seal::Evaluator& evaluator, seal::BatchEncoder& encoder)
+void preprocessing_split_database_cipher(vector<vector<seal::Ciphertext>>& A,vector<seal::Ciphertext>& u, vector<Ciphertext>& B, seal::EncryptionParameters& parms, seal::Evaluator& evaluator, seal::BatchEncoder& encoder)
 {
     Ciphertext tmp;
     B.resize(A.size());
     omp_set_num_threads(NUM_THREADS);
+    cout<<"A_size: "<<A.size()<<endl;
 #pragma omp parallel for
     for (int i = 0; i < A.size(); i++) {
-        B[i]=preprocessing_database_cipher(A[i], parms, evaluator, encoder);
+        B[i]=preprocessing_database_cipher(A[i],u[i], parms, evaluator, encoder);
     }
 }
 
@@ -417,7 +575,7 @@ void rotate_vector_all(vector<Ciphertext>& v, vector<vector<Ciphertext>>& destin
     destination.resize(v.size());
     omp_set_num_threads(NUM_THREADS);
     for (int i = 0; i < v.size(); i++) {
-        #pragma omp parallel for
+#pragma omp parallel for
         for (int j = 0; j < rotate_inside_size; j++) {
             //cout << j << endl;
             seal::Ciphertext tmp;
@@ -426,8 +584,6 @@ void rotate_vector_all(vector<Ciphertext>& v, vector<vector<Ciphertext>>& destin
         }
         destination[i] = rotate_vector;
     }
-    
-
 }
 
 
@@ -544,7 +700,7 @@ void add_allocate_result(vector<Ciphertext>& A, Ciphertext& destination, seal::E
             if (j >= client_matirx_row_size) {
                 break;
             }
-            tmp[j] = -1;
+            tmp[j] = 1;
         }
         
         encoder.encode(tmp, plain_tmp);

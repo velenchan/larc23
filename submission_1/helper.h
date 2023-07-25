@@ -113,7 +113,7 @@ inline void print_parameters(const seal::SEALContext& context)
     For the BFV scheme print the plain_modulus parameter.
 
     */
-    if (context_data.parms().scheme() == seal::scheme_type::bfv)
+    if ((context_data.parms().scheme() == seal::scheme_type::bfv) || (context_data.parms().scheme() == seal::scheme_type::bgv))
     {
         std::cout << "|   plain_modulus: " << context_data.parms().plain_modulus().value() << std::endl;
     }

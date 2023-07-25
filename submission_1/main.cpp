@@ -1,4 +1,5 @@
 #include <chrono>
+#include "helper.h"
 #include"utils.h"
 #include"seal/seal.h"
 #include"iostream"
@@ -14,6 +15,7 @@ int main() {
 	omp_set_num_threads(NUM_THREADS);
 	//����bgv���ܲ���
 	EncryptionParameters parms(scheme_type::bgv);
+	// EncryptionParameters parms(scheme_type::bfv);
 	cout  << "bgv initialization ... " << endl;
 
 	size_t poly_modulus_degree = poly_modulus_degree_size;
@@ -119,7 +121,7 @@ int main() {
 #pragma omp parallel for
 	for (int i = 0; i < size_tmp; i++) {
 		allocat_matrix_task[i].resize(batch_size, 16384);//���þ����С
-		allocate_split_matrix[i] =split_matrix(allocat_matrix_task[i], parms);//�и����	
+		allocate_split_matrix[i] = split_matrix(allocat_matrix_task[i], parms);//�и����	
 	}
 
 	
@@ -181,6 +183,7 @@ int main() {
 	auto de_rd_time_end = chrono::high_resolution_clock::now();
 	time_diff = chrono::duration_cast<chrono::microseconds>(de_rd_time_end - de_rd_time_start);
 	cout << "DE: reading database costs: " << time_diff.count()/1e6 << " s" << endl << endl;
+	
 	/*�и����*/
 	// print_line(__LINE__);
 	// cout << " Split Database Matrix" << endl;
@@ -228,10 +231,22 @@ int main() {
 	// cout << " Preprocessing Client Ciphertext Data" << endl;
 	size_tmp = client_cipher_matrix_all.size();
 	// cout << " ... ";
-#pragma omp parallel for
-	for (int i = 0; i < client_cipher_matrix_all.size(); i++) {
-		preprocessing_split_client_cipher(client_cipher_matrix_all[i], parms, evaluator, encoder);
-	}
+
+/* July 25, 2023
+*		ones * (A - E_1) * (Q - E_2) = ones * A * Q - ones * A * E_2 - ones * E_1 * Q + ones * E_1 * E_2
+*   <=> ones * A * Q  - ones * E_1 * Q = ones * (A - E_1) * Q = (ones_2000 * A - 2000 * ones_16344 ) * Q
+*   So QE does not need to do the following preprocessing_split_client_cipher, i.e., ciphertext - plain_text of 1.
+*/ 
+// #pragma omp parallel for
+// 	for (int i = 0; i < client_cipher_matrix_all.size(); i++) {
+// 		preprocessing_split_client_cipher(client_cipher_matrix_all[i], parms, evaluator, encoder);
+// 	}
+
+
+	cout << "client_cipher_matrix_all.size: " << client_cipher_matrix_all.size() << endl;
+
+
+
 	// cout << "       + Preprocessing Client Ciphertext Data Already" << endl;
 	//cout << "           + Noise budget after add_many: " << decryptor.invariant_noise_budget(client_cipher_matrix[0][0]) << " bits" << endl;
 
