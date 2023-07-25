@@ -47,6 +47,21 @@ void read_data(matrix<int64_t>& Ma, string& filename, int m, int n)
         }
         Ma(j, i) = static_cast<int64_t>(stod(line.substr(nSPos, line.length() - nSPos)));
     }
+    //    string line;
+//    for (int i = 0; i < m; i++)
+//    {
+//        //cout << "Reading " << i+1 << "th line." << endl;
+//        getline(in, line);
+//        std::istringstream iss(line);
+//        // 跳过前4个元素
+//        for (int i = 0; i < 4; ++i) {
+//            iss.ignore(numeric_limits<streamsize>::max(), '\t');
+//        }
+//        for (int j = 0; j < n; j++)
+//        {
+//            iss >> Ma(j, i);
+//        }
+//    }
     in.close();
 }
 
