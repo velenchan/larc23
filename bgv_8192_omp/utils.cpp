@@ -6,7 +6,7 @@ using namespace std;
 * ��ԭʼ����
 * ���룺����Ma���ļ�·��filename����������m����������n
 */
-void read_data(matrix<int64_t>& Ma, string& filename, int m, int n)
+/*void read_data(matrix<int64_t>& Ma, string& filename, int m, int n)
 {
     fstream in(filename);
     if (!in.is_open())
@@ -46,6 +46,39 @@ void read_data(matrix<int64_t>& Ma, string& filename, int m, int n)
             nSPos = nEPos;
         }
         Ma(j, i) = static_cast<int64_t>(stod(line.substr(nSPos, line.length() - nSPos)));
+    }
+    in.close();
+}*/
+void read_data(matrix<int64_t>& Ma, string& filename, int m, int n)//16344/2000
+{
+    fstream in(filename);
+    if (!in.is_open())
+    {
+        cout << "open .txt fail!" << endl;
+        return;
+    }
+
+    string line;
+    Ma.resize(n, m); // 注意需要resize，和txt文件中矩阵的维度对应
+    for (int i = 0; i < m; i++)
+    {
+        //cout << "Reading " << i+1 << "th line." << endl;
+        getline(in, line);
+        int nSPos = 0, nEPos = 0;
+        nSPos = line.find('\t', nSPos); // 第1个tab键
+        nSPos++;
+        nSPos = line.find('\t', nSPos); // 第2个tab键
+        nSPos++;
+        nSPos = line.find('\t', nSPos); // 第3个tab键
+        nSPos++;
+        nSPos = line.find('\t', nSPos); // 第4个tab键
+        // nSPos++;//到第五项开始的位置
+        nSPos++;
+        for (int j = 0; j < n; j++)
+        {
+
+            Ma(j, i) = line[nSPos + j * 2] - '0';
+        }
     }
     in.close();
 }
