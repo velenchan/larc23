@@ -155,9 +155,10 @@ public:
     }
 
     void linear_scale(int64_t x){
+#pragma omp parallel for
         for(int i=0;i<n;i++){
             for(int j=0;j<d;j++){
-                M[j][i]*=x;
+                M[j][i] *= x;
             }
         }
     }

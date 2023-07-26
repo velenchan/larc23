@@ -60,7 +60,7 @@ void read_database_data(matrix<int64_t>& Ma, string& filename, int m, int n)
        {
            iss >> Ma(j, i);
            //linear scaling with scaling factor 10
-           Ma.set(j, i, Ma(j, i)*10);
+        //    Ma.set(j, i, Ma(j, i)*10);
        }
    }
     in.close();
@@ -560,7 +560,7 @@ void preprocessing_split_database_cipher(vector<vector<seal::Ciphertext>>& A,vec
     B.resize(A.size());
     omp_set_num_threads(NUM_THREADS);
     // cout<<"A_size: "<<A.size()<<endl;
-// #pragma omp parallel for
+#pragma omp parallel for
     for (int i = 0; i < A.size(); i++) {
         B[i]=preprocessing_database_cipher(A[i],u[i], parms, evaluator, encoder);
     }

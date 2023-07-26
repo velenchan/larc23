@@ -177,7 +177,7 @@ int main() {
 
 	// read_data(database_matrix, database_filename, 16344, 2000);
 	read_database_data(database_matrix, database_filename, 16344, 2000);
-	// database_matrix.linear_scale(10);
+	database_matrix.linear_scale(10);
 	read_model(model_matrix,model_filename,16344,1);
 	// model_matrix.print(1,6);
 
@@ -330,4 +330,7 @@ int main() {
 	cout << "The memory cost is: " << (double)(memory_usage() / 1e6 + 1) << " MB" << endl;
 
 
+
+	return 0;
+	
 }
