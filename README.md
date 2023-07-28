@@ -28,20 +28,20 @@ We, the LARC team, proposed two different mechanisms, which we call Average-Max 
 
 ### Notations
 
-- $\bm{Q}\in\mathbb{Z}^{16,344\times 400}$: the query data 
-- $\bm{A}\in\mathbb{Z}^{2,000\times 16,344}$: the database data. 
-- $\bm{r}\in\mathbb{Z}^{1\times 400}$: the resulting scores for the $400$ query individuals
+- $\mathbf{Q}\in\mathbb{Z}^{16,344\times 400}$: the query data 
+- $\mathbf{A}\in\mathbb{Z}^{2,000\times 16,344}$: the database data. 
+- $\mathbf{r}\in\mathbb{Z}^{1\times 400}$: the resulting scores for the $400$ query individuals
 
 ### Submission 1: Average-Max
 
 The basic idea of this mechanism is to replace max by the negative average, based on the observations on the challenging data. The scores 
-$$\bm{r} = \bm{1}_{1\times 2,000}(\bm{A} - \bm{1}_{2,000\times 16,344})\bm{Q}.$$
+$\mathbf{r} = \mathbf{1}_{1\times 2,000}(\mathbf{A} - \mathbf{1}_{2,000\times 16,344})\mathbf{Q}.$
 
 ### Submission 2: Non-Principal Commponent Analysis
 
 The basis idea is to keep only non-principal commponent from the data base. The resulting scores 
-$$\bm{r} = (\bm{1}_{1\times 2,000}(10\cdot\bm{A}) - \bm{u}_{1\times 16,344})\bm{Q},$$ 
-where $\bm{u}$ is a `principal vector`, which is invariant, even for different queries or different database.
+$\mathbf{r} = (\mathbf{1}_{1\times 2,000}(10\cdot\mathbf{A}) - \mathbf{u}_{1\times 16,344})\mathbf{Q},$
+where $\mathbf{u}$ is a `principal vector`, which is invariant, even for different queries or different database.
 
 ## Compile and run (Ubuntu 22.04.2 LTS)
 ### Dependencies
