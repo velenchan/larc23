@@ -14,7 +14,6 @@
 
 #define client_data_dir "../../CHALLENGE_DATA_DIR/QUERY_SITE_genotypes.txt"
 #define database_data_dir "../../CHALLENGE_DATA_DIR/DATABASE_SITE_genotypes.txt"
- #define model_data_dir "../../model/minus_u2.txt"
-//#define model_data_dir "../../model/u2.txt"
+ #define model_data_dir "../../model/u.txt"
 
 #define result_dir "./"

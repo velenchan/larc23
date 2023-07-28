@@ -35,13 +35,13 @@ We, the LARC team, propose two different mechanisms, which we call Average-Max a
 ### Submission 1: Average-Max
 
 The basic idea of this mechanism is to replace max by the negative average, based on the observations on the challenging data. The scores 
-$\mathbf{r} = \mathbf{1}(\mathbf{A} - \mathbf{E})\mathbf{Q},$ where all entries of $\mathbf{1}\in\mathbb{Z}^{1\times 2,000}$ and $\mathbf{E}\in\mathbb{Z}^{2,000\times 16,344}$ are $1$.
+$\mathbf{r} = \mathbf{1}(\mathbf{A} - \mathbf{E})\mathbf{Q},$ where all entries of $\mathbf{1}\in\mathbb{Z}^{1\times 2,000}$ and $\mathbf{E}\in\mathbb{Z}^{2,000\times 16,344}$ are $1$. Although the matrix $\mathbf{E}$ is indeed a public parameter of the Average-Max query mechanism, we encrypt it and deal with it in its encrypted form as well.
 
-### Submission 2: Non-Principal Commponent Analysis
+### Submission 2: Minority-Max
 
-The basis idea is to keep only non-principal commponent from the data base. The resulting scores 
+The basis idea is to replace max by the minor commponent. The resulting scores 
 $\mathbf{r} = (\mathbf{1}(10\cdot\mathbf{A}) - \mathbf{u})\mathbf{Q}$, 
-where $\mathbf{u}\in\mathbb{Z}^{1\times 16,344}$ is a `principal vector` stored in `model/minus_u2.txt` (relative to repository root), which is invariant, even for different queries or different database.
+where $\mathbf{u}\in\mathbb{Z}^{1\times 16,344}$ is a `principal vector` stored in `model/u.txt` (relative to repository root). As the matrix $\mathbf{E}$ in the Average-Max mechanism, we read and encrypt the public parameter $\mathbf{u}$ and deal with it in its encrypted form. 
 
 ## Compile and run (Ubuntu 22.04.2 LTS)
 ### Dependencies
