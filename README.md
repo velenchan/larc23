@@ -35,13 +35,13 @@ We, the LARC team, proposed two different mechanisms, which we call Average-Max 
 ### Submission 1: Average-Max
 
 The basic idea of this mechanism is to replace max by the negative average, based on the observations on the challenging data. The scores 
-$\mathbf{r} = \mathbf{1}_{1\times 2,000}(\mathbf{A} - \mathbf{1}_{2,000\times 16,344})\mathbf{Q}.$
+$\mathbf{r} = \mathbf{1}(\mathbf{A} - \mathbf{E})\mathbf{Q},$ where all entries of $\mathbf{1}\in\mathbb{Z}^{1\times 2,000}$ and $\mathbf{E}\in\mathbb{Z}^{2,000\times 16,344}$ are $1$.
 
 ### Submission 2: Non-Principal Commponent Analysis
 
 The basis idea is to keep only non-principal commponent from the data base. The resulting scores 
-$\mathbf{r} = (\mathbf{1}_{1\times 2,000}(10\cdot\mathbf{A}) - \mathbf{u}_{1\times 16,344})\mathbf{Q},$
-where $\mathbf{u}$ is a `principal vector` stored in `model/minus_u2.txt` (relative to repository root), which is invariant, even for different queries or different database.
+$\mathbf{r} = (\mathbf{1}(10\cdot\mathbf{A}) - \mathbf{u})\mathbf{Q}$, 
+where $\mathbf{u}\in\mathbb{Z}^{1\times 16,344}$ is a `principal vector` stored in `model/minus_u2.txt` (relative to repository root), which is invariant, even for different queries or different database.
 
 ## Compile and run (Ubuntu 22.04.2 LTS)
 ### Dependencies
