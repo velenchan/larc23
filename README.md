@@ -24,7 +24,7 @@ The encryption, decryption, and homomorphic evaluation use the [BGV][2] scheme i
 
 ## Query Mechanism
 
-We, the LARC team, propose two different mechanisms, which we call Average-Max and Non-Principal Commponent Analysis, respectively. Note that both mechanisums are enlighted by the "[SNP-based measures of relatedness][4]". 
+We, the LARC team, propose two different mechanisms, which we call Average-Max and Non-Principal Commponent Analysis, respectively. Note that both mechanisums are enlighted by the "SNP-based measures of relatedness" in [this paper][4]. 
 
 ### Notations
 
