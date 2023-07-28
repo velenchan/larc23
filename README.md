@@ -20,11 +20,22 @@ To decide if any of the query individuals from QE  are related to any individual
 4. CE homomorphically evaluates a query mechanism, using QE's encrypted data and the public information of the HE scheme, and returns an encrypted score for each query individual.
 5. QE decrypts the encrypted results.
 
+## Encryption Scheme
+
 The encryption, decryption, and homomorphic evaluation use the [BGV][2] scheme implemented in [Microsoft SEAL][3]. 
+
+### Parameter Setup for BGV
+
+-  `plain modulus`: $33538049\approx 2^{25}$.
+-  `polynomial degree`: $2^{13} = 8192$;
+- `log_2 of ciphpertext coefficient modulus`: `BFVDefault(8192)`; in particular, it is about $215 \le 43 + 43 + 44 + 44 + 44$;
+-  `standard derivation of the error distribution`: `default value` $\approx \frac{8}{\sqrt{2\pi}}$.
+
+According to the latest version of [Lattice Estimator][4], the set of above parameters ensures that the security parameter archieves $128$.
 
 ## Query Mechanism
 
-We, the LARC team, propose two different mechanisms, which we call Average-Max and Non-Principal Commponent Analysis, respectively. Note that both mechanisums are enlighted by the "SNP-based measures of relatedness" in [this paper][4]. 
+We, the LARC team, propose two different mechanisms, which we call Average-Max and Non-Principal Commponent Analysis, respectively. Note that both mechanisums are enlighted by the "SNP-based measures of relatedness" in [this paper][5]. 
 
 ### Notations
 
@@ -104,4 +115,5 @@ wehre `X` should be specified to `1` for Average-Max or `2` for Non-Principal Co
 [1]: http://www.humangenomeprivacy.org/2023/competition-tasks.html
 [2]: https://doi.org/10.1145/2633600
 [3]: https://github.com/microsoft/seal
-[4]: https://doi.org/10.1038/nrg3821
+[4]: https://github.com/malb/lattice-estimator
+[5]: https://doi.org/10.1038/nrg3821
