@@ -41,7 +41,7 @@ $\mathbf{r} = \mathbf{1}_{1\times 2,000}(\mathbf{A} - \mathbf{1}_{2,000\times 16
 
 The basis idea is to keep only non-principal commponent from the data base. The resulting scores 
 $\mathbf{r} = (\mathbf{1}_{1\times 2,000}(10\cdot\mathbf{A}) - \mathbf{u}_{1\times 16,344})\mathbf{Q},$
-where $\mathbf{u}$ is a `principal vector`, which is invariant, even for different queries or different database.
+where $\mathbf{u}$ is a `principal vector` stored in `model/minus_u2.txt` (relative to repository root), which is invariant, even for different queries or different database.
 
 ## Compile and run (Ubuntu 22.04.2 LTS)
 ### Dependencies
