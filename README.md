@@ -68,7 +68,7 @@ wehre `X` should be specified to `1` for Average-Max or `2` for Non-Principal Co
     
         ./IDASH23
 
-- The above command produces a file in the the `submission_X/build` directory (relative to repository root, and `X` should specified to `1` or `2`) named `result.txt`. The resulting file consists of $400$ rows and $1$ column. Each row is the score of the corresponding query individual.
+- The above command produces a file in the `submission_X/build` directory (relative to repository root, and `X` should specified to `1` or `2`) named `result.txt`. The resulting file consists of $400$ rows and $1$ column. Each row is the score of the corresponding query individual.
 
 
 
