@@ -35,7 +35,7 @@ According to the latest version of [Lattice Estimator][4], the set of above para
 
 ## Query Mechanism
 
-We, the LARC team, propose two different mechanisms, which we call Average-Max and Non-Principal Commponent Analysis, respectively. Note that both mechanisums are enlighted by the "SNP-based measures of relatedness" in [this paper][5]. 
+We, the LARC team, propose two different mechanisms, which we call Average-Max and  Minority-Max, respectively. Note that both mechanisms are enlighted by the "SNP-based measures of relatedness" in [this paper][5]. 
 
 ### Notations
 
@@ -54,7 +54,7 @@ The basis idea is to replace max by the minor commponent. The resulting scores
 $\mathbf{r} = (\mathbf{1}(10\cdot\mathbf{A}) - \mathbf{u})\mathbf{Q}$, 
 where $\mathbf{u}\in\mathbb{Z}^{1\times 16,344}$ is a `principal vector` stored in `model/u.txt` (relative to repository root). As the matrix $\mathbf{E}$ in the Average-Max mechanism, we read and encrypt the public parameter $\mathbf{u}$ and deal with it in its encrypted form. 
 
-## Compile and run (Ubuntu 22.04.2 LTS)
+## Compile and Run (Ubuntu 22.04.2 LTS)
 ### Dependencies
 - cmake 3.13 or higher
 - clang
@@ -70,8 +70,8 @@ Download the source code from GitHub, unzip and enter the repository root direct
     cmake ..
     make
 
-wehre `X` should be specified to `1` for Average-Max or `2` for Non-Principal Component Analysis.
-### How to use 
+where `X` should be specified to `1` for Average-Max or `2` for Minority-Max.
+### How to Use 
 
 - Query genotype data must be renamed as  `"QUERY_SITE_genotypes.txt"`, and must be put in the  `"CHALLENGE_DATA_DIR"` directory (relative to repository root).
 - Database genotype data must be renamed as  `"DATABASE_SITE_genotypes.txt"`, and must be put in the  `"CHALLENGE_DATA_DIR"` directory (relative to repository root).
