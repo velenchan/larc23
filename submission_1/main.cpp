@@ -23,8 +23,8 @@ int main() {
 	parms.set_poly_modulus_degree(poly_modulus_degree);
 	cout << " degree ... yes" << endl;
 
-	// parms.set_coeff_modulus(CoeffModulus::Create(poly_modulus_degree, CoeffModulus_vector));
-	parms.set_coeff_modulus(CoeffModulus::BFVDefault(poly_modulus_degree));
+	parms.set_coeff_modulus(CoeffModulus::Create(poly_modulus_degree, CoeffModulus_vector));
+	// parms.set_coeff_modulus(CoeffModulus::BFVDefault(poly_modulus_degree));
 	cout << " modulus ... yes" << endl;
 
 	parms.set_plain_modulus(PlainModulus::Batching(poly_modulus_degree, PlainModulus_size));
