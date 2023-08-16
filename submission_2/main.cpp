@@ -215,6 +215,8 @@ int main() {
 	// auto de_ee_time_start = chrono::high_resolution_clock::now();
 	// cout << " Encrypt Database Original Data" << endl;
 	database_cipher_matrix=encrypt_split_matrix_parallel(database_split_matrix, encryptor, encoder);
+
+	// encrypting the model vector u
 	encrypt_vector(model_split_vector,model_cipher_matrix,encryptor,encoder);
 	// cout << "       + Encrypt Database Original Data Already" << endl;
 	// auto de_ee_time_end = chrono::high_resolution_clock::now();
