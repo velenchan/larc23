@@ -75,11 +75,11 @@ where `X` should be specified to `1` for Average-Max or `2` for Minority-Max.
 
 - Query genotype data must be renamed as  `"QUERY_SITE_genotypes.txt"`, and must be put in the  `"CHALLENGE_DATA_DIR"` directory (relative to repository root).
 - Database genotype data must be renamed as  `"DATABASE_SITE_genotypes.txt"`, and must be put in the  `"CHALLENGE_DATA_DIR"` directory (relative to repository root).
-- Open a terminal, enter the `submission_X/build` directory (relative to repository root, and `X` should specified to `1` or `2`), and run 
+- Open a terminal, enter the `submission_X/build` directory (relative to repository root, and `X` should be specified to `1` or `2`), and run 
     
         ./IDASH23
 
-- The above command produces a file in the `submission_X/build` directory (relative to repository root, and `X` should specified to `1` or `2`) named `result.txt`. The resulting file consists of $400$ rows and $1$ column. Each row is the score of the corresponding query individual.
+- The above command produces a file in the `submission_X/build` directory (relative to repository root, and `X` should be specified to `1` or `2`) named `result.txt`. The resulting file consists of $400$ rows and $1$ column. Each row is the score of the corresponding query individual.
 
 
 
