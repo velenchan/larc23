@@ -1,8 +1,8 @@
 #include <chrono>
 #include "helper.h"
-#include"utils.h"
-#include"seal/seal.h"
-#include"iostream"
+#include "utils.h"
+#include "seal/seal.h"
+#include "iostream"
 #include <omp.h>
 
 using namespace std;

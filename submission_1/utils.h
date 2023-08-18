@@ -1,14 +1,14 @@
 #pragma once
-#include<iostream>
-#include<fstream>
-#include<iomanip>
-#include"matrix.h"
-#include<string>
-#include"setting.h"
-#include"seal/seal.h"
-#include"filesystem"
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+#include "matrix.h"
+#include <string>
+#include "setting.h"
+#include "seal/seal.h"
+#include "filesystem"
 #include "helper.h"
-#include<omp.h>
+#include <omp.h>
 
 using namespace std;
 using namespace seal;

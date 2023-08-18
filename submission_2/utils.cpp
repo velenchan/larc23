@@ -331,7 +331,7 @@ void decrypt_vector_result(seal::Ciphertext& result, seal::Decryptor& decryptor,
     encoder.decode(result_dec, result_vec);
     result_vec.resize(client_matirx_row_size);
     string filename = result_dir;
-    ofstream MyFile(filename + "/result.txt", std::ofstream::out | std::ofstream::trunc);
+    ofstream MyFile(filename + "/result_of_submission_2.txt", std::ofstream::out | std::ofstream::trunc);
 
     MyFile << fixed;
     for (int i = 0; i < result_vec.size(); i++)
