@@ -277,7 +277,7 @@ int main() {
 	size_tmp=mul_vector.size();
 	result_vector.resize(size_tmp);
 #pragma omp parallel for
-	for (int i = 0; i < mul_vector.size(); i++) {
+	for (size_t i = 0; i < mul_vector.size(); i++) {
 		result_vector[i]= add_vector_result(mul_vector[i], evaluator, gal_keys);
 	}
 	// cout << "       + Add Each result Data Already" << endl;

@@ -91,7 +91,7 @@ vector<vector<Ciphertext>> encrypt_split_matrix(vector<matrix<int64_t>>& A, seal
     vector<vector<Ciphertext>> destination;
     vector<Ciphertext> tmp_cipher;
     destination.resize(A.size());
-    for (int i = 0; i < A.size(); i++) {
+    for (size_t i = 0; i < A.size(); i++) {
         encrypt_matrix(A[i], tmp_cipher, encryptor, encoder);
         destination[i]=tmp_cipher;
         tmp_cipher.clear();
@@ -126,7 +126,7 @@ vector<vector<Ciphertext>> encrypt_split_matrix_parallel(vector<matrix<int64_t>>
     // cout<<"A_size"<<A.size()<<endl;
     //omp_set_num_threads(NUM_THREADS);
 //#pragma omp parallel for
-    for (int i = 0; i < A.size(); i++) {
+    for (size_t i = 0; i < A.size(); i++) {
         destination[i]= encrypt_matrix_parallel(A[i], encryptor, encoder);
     }
     return destination;
@@ -179,7 +179,7 @@ void decrypt_vector_result(seal::Ciphertext& result, seal::Decryptor& decryptor,
     ofstream MyFile(filename + "/result_of_submission_1.txt", std::ofstream::out | std::ofstream::trunc);
 
     MyFile << fixed;
-    for (int i = 0; i < result_vec.size(); i++)
+    for (size_t i = 0; i < result_vec.size(); i++)
     {
         MyFile << setprecision(10) << result_vec[i] << endl;
     }
@@ -338,7 +338,7 @@ vector<matrix<int64_t>> encode_split_client_matrix(vector<matrix<int64_t>>& spli
     vector<matrix<int64_t>> destination_split_matrix;
     // int split_length = split_matrix[0].get_cols();
     matrix<int64_t> tmp_matrix;
-    for (int i = 0; i < split_matrix.size(); i++) {
+    for (size_t i = 0; i < split_matrix.size(); i++) {
         encode_client_matrix(split_matrix[i], tmp_matrix, m, split_matrix[i].get_cols());
         destination_split_matrix.push_back(tmp_matrix);
         tmp_matrix.clear();
@@ -355,8 +355,8 @@ void preprocessing_split_client_cipher(vector<vector<seal::Ciphertext>>& A, seal
     encoder.encode(vector_tmp, plain_tmp);
 //     omp_set_num_threads(NUM_THREADS);
 // #pragma omp parallel for
-    for (int i = 0; i < A.size(); i++) {
-        for (int j = 0; j < A[i].size(); j++) {
+    for (size_t i = 0; i < A.size(); i++) {
+        for (size_t j = 0; j < A[i].size(); j++) {
             evaluator.add_plain_inplace(A[i][j], plain_tmp);
         }
     }
@@ -404,7 +404,7 @@ void preprocessing_split_database_cipher(vector<vector<seal::Ciphertext>>& A, ve
     B.resize(A.size());
     omp_set_num_threads(NUM_THREADS);
 #pragma omp parallel for
-    for (int i = 0; i < A.size(); i++) {
+    for (size_t i = 0; i < A.size(); i++) {
         B[i]=preprocessing_database_cipher(A[i], parms, evaluator, encoder);
     }
 }
@@ -418,7 +418,7 @@ void rotate_vector_all(vector<Ciphertext>& v, vector<vector<Ciphertext>>& destin
 
     destination.resize(v.size());
     omp_set_num_threads(NUM_THREADS);
-    for (int i = 0; i < v.size(); i++) {
+    for (size_t i = 0; i < v.size(); i++) {
 #pragma omp parallel for
         for (int j = 0; j < rotate_inside_size; j++) {
             //cout << j << endl;
@@ -499,7 +499,7 @@ vector<Ciphertext> matrix_multiply_split_vector(vector<vector<seal::Ciphertext>>
     vector<Ciphertext> destination;
     seal::Ciphertext tmp_result;
     destination.resize(A.size());
-    for (int i = 0; i < A.size(); i++) {
+    for (size_t i = 0; i < A.size(); i++) {
         //cout<<i<<"   " << v[i].size() << endl;
         matrix_multiply_vector(A[i], v[i], tmp_result, parms, evaluator, gal_keys, relin_keys);
         destination[i]=tmp_result;
@@ -511,7 +511,7 @@ void matrix_multiply_split_vector(vector<vector<seal::Ciphertext>>& A, vector<ve
 {
     seal::Ciphertext tmp_result;
     destination.resize(A.size());
-    for (int i = 0; i < A.size(); i++) {
+    for (size_t i = 0; i < A.size(); i++) {
         //cout<<i<<"   " << v[i].size() << endl;
         matrix_multiply_vector(A[i], v[i], tmp_result, parms, evaluator, gal_keys, relin_keys);
         destination[i] = tmp_result;
@@ -534,7 +534,7 @@ void add_allocate_result(vector<Ciphertext>& A, Ciphertext& destination, seal::E
     // cout<<"A.size:"<<A.size()<<endl;
 //     omp_set_num_threads(NUM_THREADS);
 // #pragma omp parallel for
-    for (int i = 0; i < A.size(); i++) {
+    for (size_t i = 0; i < A.size(); i++) {
         int start_index = i * batch_size;
         int end_index = (i + 1) * batch_size;
        
