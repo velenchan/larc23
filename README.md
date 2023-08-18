@@ -28,7 +28,7 @@ The encryption, decryption, and homomorphic evaluation use the [BGV][2] scheme i
 
 -  `plain modulus`: $33538049\approx 2^{25}$.
 -  `polynomial degree`: $2^{13} = 8192$;
-- `log_2 of ciphpertext coefficient modulus`: `BFVDefault(8192)`; in particular, it is about $200 \le 41 + 39 + 40 + 40 + 40$;
+- `log_2 of ciphpertext coefficient modulus`: `BFVDefault(8192)`; in particular, it is about $200 = 41 + 39 + 40 + 40 + 40$;
 -  `standard derivation of the error distribution`: `default value` $\approx \frac{8}{\sqrt{2\pi}}$.
 
 According to the latest version of [Lattice Estimator][4], the set of above parameters ensures that the security parameter archieves $128$.
