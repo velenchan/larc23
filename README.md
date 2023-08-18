@@ -57,7 +57,7 @@ where $\mathbf{u}\in\mathbb{Z}^{1\times 16,344}$ is a `principal vector` stored 
 ## Compile and Run (Ubuntu 22.04.2 LTS)
 ### Dependencies
 - cmake 3.13 or higher
-- gcc 11.4.0 
+- gcc 11.4.0 or higher
 - openmp
 - [Microsoft SEAL](https://github.com/microsoft/seal)
 
