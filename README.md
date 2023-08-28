@@ -79,7 +79,7 @@ where `X` should be specified to `1` for Average-Max or `2` for Minority-Max.
     
         ./IDASH23
 
-- The above command produces a file in the `submission_X/build` directory (relative to repository root, and `X` should be specified to `1` or `2`) named `result.txt`. The resulting file consists of $400$ rows and $1$ column. Each row is the score of the corresponding query individual.
+- The above command produces a file in the `submission_X/build` directory (relative to repository root, and `X` should be specified to `1` or `2`) named `result_of_submission_X.txt`. The resulting file consists of $400$ rows and $1$ column. Each row is the score of the corresponding query individual.
 
 
 
